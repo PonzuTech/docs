@@ -1,19 +1,15 @@
 ---
 title: "The Distributor"
-description: "Ponzu's fee-routing engine. Dynamically splits all protocol revenue between presale holders, farmers, the project, and Kioke holders based on claim progress."
+description: "Ponzu's fee-routing engine. Splits all protocol revenue between presale holders, farmers, the project, and Kioke holders based on claim progress."
 ---
 
 ## Overview
 
-Every protocol needs to decide how to allocate revenue. Most make this decision once, at launch, and it never changes. Some don't bother at all.
-
-Ponzu's Distributor makes this decision dynamically based on claim progress. As presale participants claim their tokens, the allocation shifts automatically. No governance votes. No admin intervention. No one can change the formula after deployment.
+The Distributor splits all protocol revenue dynamically based on claim progress. As presale participants claim their tokens, the allocation shifts automatically. No governance votes. No admin keys. No one can change the formula after deployment.
 
 ---
 
 ## Income Sources
-
-The Distributor receives value from three sources:
 
 | Source | Type | When |
 |--------|------|------|
@@ -21,7 +17,7 @@ The Distributor receives value from three sources:
 | Refund penalties (10% of tokens) | Project tokens | Before launch |
 | PonzuSwap trading fees (1%) | WETH | Ongoing after launch |
 
-LP tokens from initial liquidity are held permanently by the Presale contract. They never enter the Distributor. This is what makes liquidity unruggable: the LP tokens sit in a contract with no withdrawal function.
+LP tokens from initial liquidity are held permanently by the Presale contract. No withdrawal function exists. That's what makes liquidity unruggable.
 
 ---
 
@@ -42,9 +38,9 @@ presaleShare = 40% x (1 - totalClaimed / totalClaimableAmount)
 farmShare    = 40% + (40% x totalClaimed / totalClaimableAmount)
 ```
 
-`totalClaimableAmount` is the actual number of tokens sold during presale (accounting for any refund adjustments). As presale participants claim, their allocation decreases and the farm's increases. When the last person claims, the presale share hits 0% and the farm receives 80%.
+`totalClaimableAmount` is the actual number of tokens sold during presale (accounting for refund adjustments). As presale participants claim, their allocation decreases and the farm's increases. When the last person claims, the presale share hits 0% and the farm receives 80%.
 
-**Project treasury** = the wallet of the project creator who deployed the token. This is their ongoing revenue share from the project they built.
+**Project treasury** = the wallet of the project creator who deployed the token.
 
 **Kioke holders** = holders of Kioke Card NFTs who have endorsed this specific project with Koji credits.
 
@@ -62,7 +58,7 @@ When the Distributor receives WETH from swap fees, a fifth recipient enters the 
 | Project treasury | 15% | 15% | 15% |
 | Kioke holders | 5% | 5% | 5% |
 
-The key difference from token distribution: ETH splits include a fixed 40% protocol fee. The dynamic presale-to-farm shift operates on a smaller range (20% instead of 40%) because the protocol takes its share first.
+The dynamic presale-to-farm shift operates on a smaller range (20% instead of 40%) because the protocol takes its 40% first.
 
 **ETH shift formula:**
 ```
@@ -74,7 +70,7 @@ farmShare    = 20% + (20% x totalClaimed / totalClaimableAmount)
 
 ## Worked Example
 
-Assume a project generates 10 ETH in swap fees when 50% of presale tokens have been claimed:
+10 ETH in swap fees when 50% of presale tokens have been claimed:
 
 | Recipient | Share | Amount |
 |-----------|-------|--------|
@@ -84,7 +80,7 @@ Assume a project generates 10 ETH in swap fees when 50% of presale tokens have b
 | Project treasury | 15% | 1.5 ETH |
 | Kioke holders | 5% | 0.5 ETH |
 
-If you held 5% of the presale and hadn't claimed your tokens yet, your ETH reward from this batch: 5% of 1.0 ETH = 0.05 ETH. Claimable immediately. Repeatable every time new fees accumulate.
+You held 5% of the presale and haven't claimed your tokens yet. Your ETH reward from this batch: 5% of 1.0 ETH = 0.05 ETH. Claimable immediately. Repeatable every time new fees accumulate.
 
 Now assume 5,000 tokens were forfeited by early claimers during that same period:
 
@@ -97,50 +93,33 @@ Now assume 5,000 tokens were forfeited by early claimers during that same period
 
 ---
 
-## Why Dynamic Allocation?
-
-The presale allocation provides rewards to holders during the vesting period. But presale participants can only claim tokens once. Continuing to reward an empty presale pool would mean burning value.
-
-Instead, as the presale empties, its allocation shifts to the farm. The farm extends the alignment horizon beyond the initial vesting period. After diamond-hand vesting completes, there's natural sell pressure from holders who waited but are ready to exit. The farm gives a reason to stay: stake LP tokens, earn non-inflationary rewards from fees.
-
-Conviction, extended.
-
----
-
 ## Lifetime ETH Rewards
 
-Even after the vesting period, Ponzu Bottle holders who haven't claimed their tokens continue earning ETH from the Distributor. ETH rewards are calculated pro-rata based on your share of the presale:
+Even after vesting ends, Ponzu Bottle holders who haven't claimed their tokens keep earning ETH from the Distributor. Pro-rata based on your share of the presale:
 
 ```
 yourETHReward = (yourPurchases / totalPurchases) x ethSentToPresale
 ```
 
-ETH rewards can be claimed at any time, repeatedly, without affecting your token claim. Each time you call `claimETH(tokenId)`, you receive all accumulated ETH since your last claim. There's no minimum threshold.
+Claim ETH anytime by calling `claimETH(tokenId)`. You receive all accumulated ETH since your last claim. No minimum threshold. Repeatable.
 
-Once you claim your tokens (burning your Ponzu Bottle), your ETH rewards stop. The tradeoff: claim tokens early and lose future ETH income, or hold your Ponzu Bottle and keep collecting.
+Once you claim your tokens (burning your Ponzu Bottle), ETH rewards stop. The tradeoff: claim tokens early and lose future ETH income, or hold your Ponzu Bottle and keep collecting.
+
+Conviction, extended.
 
 ---
 
 ## Permissionless Operation
 
-The Distributor has no admin functions. Once initialized at deployment:
+No admin functions. Split ratios are calculated algorithmically from on-chain state. Anyone can trigger distribution by calling `distribute(token)` or `distributeETH()`. No one can change the formula or redirect funds. No proxy pattern. No upgrade mechanism. The bytecode is final.
 
-- Split ratios are calculated algorithmically from on-chain state
-- Anyone can trigger distribution by calling `distribute(token)` or `distributeETH()`
-- No one can change the formula
-- No one can redirect funds
-- The `init()` function can only be called once (reverts with `AlreadyInitialized` on any second call)
-- No proxy pattern. No upgrade mechanism. The bytecode is final.
+**Griefing?** Calling `distribute()` with dust amounts costs the caller gas but doesn't affect other users. Your share doesn't change regardless of when distribution is called.
 
-**What about griefing?** If someone calls `distribute()` when only dust amounts are in the contract, the transaction succeeds but distributes negligible value. This costs the caller gas but doesn't affect other users. Tokens accumulate until someone triggers distribution. Your share doesn't change regardless of when distribution is called.
-
-**What about random tokens?** If someone sends a random ERC20 to the Distributor and calls `distribute(randomToken)`, it splits that token by the current ratios. No harm to the core token or ETH flows. WETH sent to `distribute()` is rejected. WETH must go through `distributeETH()`, which unwraps it to native ETH first.
+**Random tokens?** Sending a random ERC20 and calling `distribute(randomToken)` splits that token by current ratios. No harm to core flows. WETH must go through `distributeETH()`.
 
 ---
 
 ## On-Chain Verification
-
-Every Distributor deploys with view functions you can call directly on Etherscan:
 
 | Function | Returns |
 |----------|---------|

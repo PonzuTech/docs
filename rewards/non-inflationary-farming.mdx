@@ -3,24 +3,21 @@ title: "Non-Inflationary Farming"
 description: "LP staking rewards from real economic activity. Fixed supply. No mint function. Every reward token was earned by someone else's impatience."
 ---
 
-## The Problem with Traditional Farming
+## How It Works
 
-Inflation-based farming destroyed projects in 2021. Mint new tokens, distribute to stakers, call it "yield." The arithmetic is obvious: you're diluting existing holders to pay new ones. Industrial farming bots made it worse. Constant sell pressure from freshly minted reward tokens. Death by a thousand sells.
+Inflation-based farming destroyed projects in 2021. Mint new tokens, distribute to stakers, call it yield. The problem is obvious. You're diluting existing holders to pay new ones. Bots farm it, dump it, move on. Death by a thousand sells.
 
----
-
-## How Ponzu Farming Works
-
-Ponzu's farm distributes rewards from actual economic activity. No new tokens are ever minted. The token contract has no mint function. The total supply is 1,000,000 at creation, and it stays at 1,000,000 forever.
+Ponzu's farm distributes rewards from actual economic activity. No new tokens are ever minted. The token contract has no mint function. Total supply is 1,000,000 at creation and stays at 1,000,000 forever.
 
 **Reward sources:**
+
 | Source | Type | Origin |
 |--------|------|--------|
 | Forfeited tokens from early presale claimers | Project tokens | Presale holders who claimed before vesting completed |
 | 1% PonzuSwap trading fees | WETH | Every swap on PonzuSwap |
 | LP penalties from early farm exits | LP tokens | Farmers who unstaked before 7 days |
 
-If trading volume grows, ETH rewards grow. If more people claim early, token rewards grow. The feedback loop is honest: project health directly determines farm yield.
+Trading volume grows, ETH rewards grow. More people claim early, token rewards grow. Project health directly determines farm yield.
 
 ---
 
@@ -31,19 +28,19 @@ If trading volume grows, ETH rewards grow. If more people claim early, token rew
 3. Each stake mints a **Liquidity Card NFT** (ERC-721)
 4. Rewards accumulate proportionally to your staked LP relative to total staked LP
 
-**No top-ups.** Each `stakeNewCard()` call creates a new Liquidity Card with its own penalty timer and reward tracking. You can't add more LP to an existing card.
+**No top-ups.** Each `stakeNewCard()` call creates a new Liquidity Card with its own penalty timer and reward tracking.
 
 ### ZapETH
 
-The `zapETHToLP(tokenAddress, minLPTokens)` function converts ETH into LP tokens in a single transaction. Under the hood, it splits your ETH, swaps half for project tokens, and adds both sides as liquidity.
+`zapETHToLP(tokenAddress, minLPTokens)` converts ETH into LP tokens in a single transaction. Splits your ETH, swaps half for project tokens, adds both sides as liquidity.
 
-The `minLPTokens` parameter is your slippage protection. Set it to the expected LP output minus your slippage tolerance (e.g., 2%). If front-running or price movement causes the output to fall below your minimum, the transaction reverts and you keep your ETH.
+The `minLPTokens` parameter is your slippage protection. Set it to expected LP output minus your tolerance (e.g., 2%). If front-running or price movement causes the output to fall below your minimum, the transaction reverts and you keep your ETH.
 
 ---
 
 ## The 7-Day Conviction Window
 
-The farm has its own conviction mechanism. Unstake before 7 days and you leave a portion of your LP behind.
+Unstake before 7 days and you leave a portion of your LP behind.
 
 | Days Staked | Penalty | LP Returned |
 |-------------|---------|-------------|
@@ -58,38 +55,36 @@ The farm has its own conviction mechanism. Unstake before 7 days and you leave a
 penalty = (7 - daysSinceStake) / 7 x 100%
 ```
 
-At 0 days (same block as staking), the penalty is 100%. You get nothing back. This prevents flash-loan attacks where someone stakes, captures a reward distribution, and immediately unstakes.
+At 0 days (same block as staking), the penalty is 100%. You get nothing back. Prevents flash-loan attacks where someone stakes, captures a reward distribution, and immediately unstakes.
 
 **Where does the penalized LP go?**
-- 50% added to remaining stakers' reward calculations. Their share of future rewards increases proportionally, as if they had staked more LP. The actual LP tokens stay in the farm contract, backing their position.
+- 50% added to remaining stakers' reward calculations. Their share of future rewards increases proportionally.
 - 50% becomes protocol-owned liquidity. Permanently locked. Deepens the trading pool for everyone.
 
-Same principle as diamond-hand vesting: impatient capital subsidizes the patient.
+Impatient capital subsidizes the patient.
 
 ---
 
 ## Claim Types
 
-Rewards earned from the farm come in two forms with different claim rules:
-
 ### ETH Rewards (from swap fees via Distributor)
 - Claimable anytime via `claimETH(cardId)`
 - Repeatable. Claim as often as you want.
 - No penalty on ETH claims
-- Accumulated ETH is tracked per Liquidity Card
+- Accumulated ETH tracked per Liquidity Card
 
 ### Token Rewards (from forfeited vesting tokens via Distributor)
 - **One-time claim** per Liquidity Card
 - Same diamond-hand principle as the presale: claim early and forfeit unvested tokens to remaining farm stakers
-- Your vested amount depends on when you claim relative to the reward epoch
+- Vested amount depends on when you claim relative to the reward epoch
 
-**What happens if you unstake before claiming?** Unstaking burns your Liquidity Card. Any unclaimed ETH rewards are claimed automatically during the unstake transaction. Unclaimed token rewards follow the same one-time claim logic: you receive whatever has vested at the time of unstake, and the unvested portion goes to remaining stakers via the Distributor.
+**Unstake before claiming?** Unstaking burns your Liquidity Card. Unclaimed ETH rewards are claimed automatically during the unstake transaction. Unclaimed token rewards follow the one-time claim logic: you receive whatever has vested at the time of unstake, unvested portion goes to remaining stakers via the Distributor.
 
 ---
 
 ## Liquidity Card NFT
 
-Each staking position is represented as an ERC-721 NFT with independent state.
+Each staking position is an ERC-721 NFT with independent state.
 
 | Property | Detail |
 |----------|--------|
@@ -99,13 +94,13 @@ Each staking position is represented as an ERC-721 NFT with independent state.
 | Transferable | Yes. Position, pending rewards, and penalty timer all transfer with the NFT |
 | Burned on | `unstake()` |
 
-**Multi-card strategy:** Stake at different times to manage different penalty clocks. Unstake Card #1 (no penalty after 7 days) while Card #2 continues earning. Claim ETH from any card independently. Each card's rewards are tracked separately.
+**Multi-card strategy:** Stake at different times to manage different penalty clocks. Unstake Card #1 (no penalty after 7 days) while Card #2 continues earning. Claim ETH from any card independently. Each card's rewards tracked separately.
 
 ---
 
 ## Modeling Expected Returns
 
-Farm APY depends on two variables: trading volume and total LP staked. No one can promise a specific return because both change constantly. But here's the formula so you can model it yourself:
+Farm APY depends on trading volume and total LP staked. Both change constantly. Here's the formula so you can model it yourself:
 
 **ETH rewards per epoch (7 days):**
 ```
@@ -122,19 +117,19 @@ Where `ethDistributedToFarm` depends on the Distributor's current farm allocatio
 - Your LP: 10% of total staked
 - Your weekly ETH: $150
 
-That's the model. Volume up = rewards up. More LP staked = your share decreases. No inflation tricks. No vanishing APY from token emissions.
+Volume up = rewards up. More LP staked = your share decreases. No inflation tricks. No vanishing APY from token emissions.
 
-**Token rewards** are harder to predict because they depend on how many presale holders claim early and when. High early-claim activity = more forfeited tokens = more farm rewards.
+**Token rewards** are harder to predict. They depend on how many presale holders claim early and when. High early-claim activity = more forfeited tokens = more farm rewards.
 
 ---
 
-## Risks to Understand
+## Risks
 
-**Impermanent loss.** When you provide LP, you hold both the project token and ETH. If the token price moves significantly in either direction, your LP position can be worth less than holding the two assets separately. This is standard AMM risk and applies to every LP farm. At large positions ($50K+), impermanent loss can exceed farming rewards during high-volatility periods. Model both sides.
+**Impermanent loss.** Standard AMM risk. You hold both the project token and ETH. If the token price moves significantly in either direction, your LP position can be worth less than holding the two assets separately. At large positions ($50K+), impermanent loss can exceed farming rewards during high-volatility periods. Model both sides.
 
-**Low liquidity concentration.** If very little LP is staked in the farm, individual stakers capture disproportionate rewards. This is a feature for early stakers, but it also means large reward batches can be captured by a small number of participants. There's no minimum stake requirement.
+**Low liquidity concentration.** If very little LP is staked, individual stakers capture disproportionate rewards. Feature for early stakers, but large reward batches can be captured by a small number of participants.
 
-**Smart contract risk.** The farm contract is immutable post-deployment. No admin can upgrade, pause, or modify it. This means bugs can't be patched. It also means no one can rug you. Tradeoff accepted.
+**Smart contract risk.** The farm contract is immutable post-deployment. No admin can upgrade, pause, or modify it. Bugs can't be patched. No one can rug you. Tradeoff accepted.
 
 ---
 

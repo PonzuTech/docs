@@ -21,7 +21,7 @@ Koji is tied to the barrel, not the wallet. Transfer the Kioke Card NFT, the Koj
 
 Koji is **non-transferable** between barrels. You cannot buy Koji. You cannot trade it. You can only accumulate it by holding a barrel through launches, and burn it on projects you endorse.
 
-This creates a time-weighted advantage. Barrels held longer have more Koji to allocate. A barrel acquired after 200 launches has 200 Koji. A new buyer on the secondary market gets whatever the previous holder accumulated but didn't burn.
+A barrel acquired after 200 launches has 200 Koji. A new buyer on the secondary market gets whatever the previous holder accumulated but didn't burn.
 
 ---
 
@@ -39,7 +39,7 @@ You can add more Koji to an existing endorsement at any time.
 
 ### What You Earn
 
-Fermenting rewards are paid in **project tokens and ETH**, not Koji. The Distributor for each project collects from three sources:
+Fermenting rewards are paid in **project tokens and ETH**, not Koji. The Distributor for each project collects from:
 
 - Forfeited tokens from early claimers during diamond-hand vesting
 - 1% swap fees from all PonzuSwap trades on that pair
@@ -47,7 +47,7 @@ Fermenting rewards are paid in **project tokens and ETH**, not Koji. The Distrib
 
 5% of everything the Distributor receives goes to the Kioke pool for that project, split among endorsing barrels.
 
-If you endorse 15 projects, you receive revenue streams in 15 different project tokens plus ETH from swap fees. Each stream is independent. Each scales with that project's trading volume and claim activity.
+Endorse 15 projects, you receive revenue streams in 15 different project tokens plus ETH from swap fees. Each stream is independent. Each scales with that project's trading volume and claim activity.
 
 ---
 
@@ -61,24 +61,15 @@ Your share: 10/100 = 10% of the Kioke allocation for Project X.
 - Project X monthly trading volume: 2,000 ETH
 - Swap fees collected: 20 ETH (1%)
 - Early claim forfeitures add project tokens to the Distributor
-- Kioke 5% of ETH Distributor share: 5% of the Kioke-eligible portion
-- Your 10% of that: calculable on-chain, paid in ETH + project tokens
+- Your 10% of the Kioke 5% ETH share: calculable on-chain, paid in ETH + project tokens
 
-The math scales proportionally. Higher trading volume = more swap fees = more Distributor inflow = more Kioke earnings.
+Higher trading volume = more swap fees = more Distributor inflow = more Kioke earnings. Back a project that sustains volume, your endorsement keeps paying. Back a project that dies, your Koji is burned with nothing to show for it.
 
-Back a project that sustains volume, your endorsement keeps paying. Back a project that dies, your Koji is burned with nothing to show for it. The mechanism rewards judgment, not just participation.
+Conviction pays.
 
 ---
 
-## The Koji Allocation Game
-
-Each Koji burn is a capital allocation decision with real opportunity cost. Once burned, that Koji is gone. It cannot be redirected.
-
-### Strategic Considerations
-
-**Early endorsement advantage.** If you're among the first to endorse a project and it succeeds, your share of the 5% is large. As more barrels pile on, your percentage dilutes. Being early on winners is directly rewarded.
-
-**Concentration vs. diversification.** Same tradeoff as portfolio construction.
+## Strategy
 
 | Strategy | Koji Use | Risk Profile | Expected Outcome |
 |----------|----------|-------------|-----------------|
@@ -86,9 +77,11 @@ Each Koji burn is a capital allocation decision with real opportunity cost. Once
 | Spread across 15-20 projects | 3-5 Koji each | Lower variance | Small share of many, buffered against individual failures |
 | Hold and wait | 0 Koji burned | No fermenting revenue | Accumulate a larger Koji balance for future deployment |
 
-**Hoarding penalty.** Koji sitting in your barrel earns zero fermenting revenue. There's an implicit cost to waiting: you miss the early-endorser advantage on projects launching now. But you preserve optionality for higher-conviction bets later.
+**Early endorsement advantage.** If you're among the first to endorse a project and it succeeds, your share of the 5% is large. As more barrels pile on, your percentage dilutes. Being early on winners is directly rewarded.
 
-**Information value.** Koji endorsements are public and on-chain. Founders can see which barrels endorsed their project. Communities can see which barrels have the best track record. This creates a reputation layer where your endorsement history has social and deal-flow value beyond the direct financial return.
+**Hoarding penalty.** Koji sitting in your barrel earns zero fermenting revenue. You miss the early-endorser advantage on projects launching now. But you preserve optionality for higher-conviction bets later.
+
+**Information value.** Koji endorsements are public and on-chain. Founders can see which barrels endorsed their project. Communities can see which barrels have the best track record. Your endorsement history has social and deal-flow value beyond the direct financial return.
 
 ---
 
@@ -108,9 +101,9 @@ Fermenting rewards follow the same vesting pattern as presale claims:
 | 7 | 70% | 30% |
 | 10 | 100% | 0% |
 
-If another endorser claims on Day 2, they forfeit 80% of their accumulated rewards. That 80% is redistributed to remaining endorsers, including you, if you wait.
+Someone claims on Day 2, they forfeit 80% of their accumulated rewards. That 80% redistributes to remaining endorsers, including you, if you wait.
 
-Patient endorsers earn their own rewards plus a share of forfeited rewards from impatient endorsers. The mechanism filters for conviction at every layer of the protocol.
+Impatient capital subsidizes the patient. The mechanism filters for conviction at every layer of the protocol.
 
 ---
 
@@ -118,11 +111,11 @@ Patient endorsers earn their own rewards plus a share of forfeited rewards from 
 
 The Distributor transfers 5% of project tokens and 5% of ETH to the KiokeClaim contract. The contract detects new token balances via balance diff on any state change. No special callback or interface required from project contracts.
 
-Rewards accumulate per-project. Each endorsement is tracked independently. You can have different claim timing across different projects.
+Rewards accumulate per-project. Each endorsement tracked independently. Different claim timing across different projects.
 
 ---
 
-## Koji vs. Crafting: Two Revenue Streams, Two Risk Profiles
+## Crafting vs. Fermenting
 
 | | Crafting (Passive) | Fermenting (Active) |
 |--|-------------------|-------------------|

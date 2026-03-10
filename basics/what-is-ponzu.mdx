@@ -1,25 +1,23 @@
 ---
 title: "What is Ponzu?"
-description: "A permissionless token factory on Ethereum with diamond-hand vesting. One transaction. Eight contracts. No admin keys."
+description: "A token factory on Ethereum. One transaction deploys eight immutable contracts. Diamond-hand vesting, non-inflationary farming, permanent liquidity."
 ---
 
-## The 3-Sentence Version
+## A token factory that adds time.
 
-**The problem:** Token launches are built for extraction. Insiders get cheap tokens and dump on the community. Bots front-run every launch. Projects die before they ship anything.
+We launch roughly a million tokens per month. Serial deployers drain 80% of all liquidity within 24 hours. A small cartel of 12 wallet clusters engineers nearly 20% of token creations while extracting millions. The business model is velocity: deploy, pump, drain, repeat.
 
-**What Ponzu does:** Token factory with diamond-hand vesting. Claim your tokens early and you forfeit the unvested portion to everyone who waited. Refund before launch and get 90% of your ETH back. The 10% penalty goes to those who stayed. All rewards come from real fees, not printing new tokens.
+Ponzu deploys eight contracts in a single transaction. Presale, DEX pool, vesting, farming, distributor, NFT positions. All immutable. No admin keys. No upgrade proxies.
 
-**Why it matters:** You can fake followers, volume, and charts. You can't fake waiting. Ponzu makes patience the most profitable strategy, enforced by immutable contracts.
+Every mechanism follows one principle: **exit early, but leave the rest.**
 
 ---
 
 ## How it works
 
-Every token launched through Ponzu follows the same lifecycle:
-
 <Steps>
   <Step title="Presale">
-    Linear pricing. Price starts at a tenth of your target market cap and rises with each buy. The market validates your pricing through participation, not arbitrage. Each position is a transferable Ponzu Bottle NFT. 690,000 tokens available. 90% ETH refund before launch.
+    Linear pricing. Price starts at a tenth of your target and rises with each buy. Each position is a transferable Ponzu Bottle NFT. 690,000 tokens available (69% of supply). 90% ETH refund before launch.
   </Step>
   <Step title="Launch">
     Presale fills, anyone triggers launch. 310,000 tokens + raised ETH become permanent liquidity on PonzuSwap. LP tokens sit in a contract with no withdrawal function. The dev is dead the moment that button is pressed.
@@ -50,99 +48,46 @@ Every token launched through Ponzu follows the same lifecycle:
 
 ---
 
-## The System
+## Eight contracts, one transaction
 
-One transaction deploys eight contracts that wire together into a complete token ecosystem:
-
-| Contract | Purpose |
-|----------|---------|
+| Contract | What it does |
+|----------|-------------|
 | **Token** | ERC-20 with 1,000,000 fixed supply. No mint function. |
-| **Presale** | Handles purchases, refunds, vesting, claims. 690,000 tokens (69%). |
-| **Launcher** | Creates DEX liquidity at graduation. 310,000 tokens (31%). |
+| **Presale** | Purchases, refunds, vesting, claims. 690,000 tokens. |
+| **Launcher** | Creates DEX liquidity at graduation. 310,000 tokens. |
 | **Distributor** | Routes all fees dynamically between presale holders, farmers, project, and Kioke. |
 | **Farm** | LP staking for non-inflationary rewards. |
 | **Ponzu Bottle** | ERC-721 NFT representing a presale position. Transferable. |
 | **Liquidity Card** | ERC-721 NFT representing a farm staking position. Transferable. |
 | **Project** | Registry and access control coordinator. |
 
-After deployment, all parameters are fixed. No upgrade proxies. No admin keys. No migration steps. The system runs itself.
+After deployment, all parameters are fixed. No upgrade proxies. No admin keys. No migration steps.
 
 ---
 
-## Token Allocation
+## Verify it yourself
 
-| Allocation | Amount | Percentage |
-|------------|--------|------------|
-| Presale (community) | 690,000 | 69% |
-| DEX Liquidity | 310,000 | 31% |
-| Team | 0 | 0% |
-| VCs | 0 | 0% |
-| Treasury | 0 | 0% |
-
-The allocation is set at creation and cannot change.
-
----
-
-## Verify It Yourself
-
-Every claim above is on-chain. Here's how to check:
+Every claim above is on-chain.
 
 | Claim | How to verify |
 |-------|---------------|
-| Fixed 1M supply | Call `totalSupply()` on the Token contract. Returns `1000000000000000000000000` (1M with 18 decimals). |
-| No mint function | Read the Token contract source on Etherscan. No `mint()` function exists. |
-| 69/31 split | Check `balanceOf(presaleAddress)` and `balanceOf(launcherAddress)` on the Token contract at deployment. |
-| No admin keys | No `owner`, `admin`, or `onlyOwner` modifiers in any of the eight contracts after initialization. |
-| LP permanently locked | The Presale contract holds LP tokens. No `withdraw`, `removeLiquidity`, or `transfer` function exists for them. |
-| Fee splits | Read the Distributor contract. Hardcoded percentages, no setter functions. |
+| Fixed 1M supply | Call `totalSupply()` on the Token contract |
+| No mint function | Read the Token contract source on Etherscan. No `mint()` exists. |
+| 69/31 split | Check `balanceOf(presaleAddress)` and `balanceOf(launcherAddress)` at deployment |
+| No admin keys | No `owner`, `admin`, or `onlyOwner` modifiers in any contract after init |
+| LP permanently locked | The Presale contract holds LP tokens. No `withdraw` or `transfer` function exists for them. |
+| Fee splits | Read the Distributor. Hardcoded percentages, no setter functions. |
 
-Factory contract (PonzuRecipe): [`0x1155484c5fE614538d83c444f9a6dB662E6a7153`](https://etherscan.io/address/0x1155484c5fE614538d83c444f9a6dB662E6a7153)
-
-Every project deployed through PonzuRecipe emits a `PonzuCrafted` event with all eight contract addresses. Pull the event, read each contract, confirm the claims yourself.
+Factory contract: [`0x1155484c5fE614538d83c444f9a6dB662E6a7153`](https://etherscan.io/address/0x1155484c5fE614538d83c444f9a6dB662E6a7153)
 
 ---
 
-## What Makes It Different
-
-<CardGroup cols={2}>
-  <Card title="Diamond-Hand Vesting" icon="gem">
-    Early claimers forfeit tokens to patient holders. Patience is rewarded economically, enforced on-chain.
-  </Card>
-  <Card title="Non-Inflationary Farming" icon="leaf">
-    Fixed 1M supply. No mint function. All rewards from trading fees, early exit penalties, and forfeited tokens.
-  </Card>
-  <Card title="NFT-Based Positions" icon="id-badge">
-    Ponzu Bottle (presale) and Liquidity Card (farm) are tradeable NFTs. Your position moves with the NFT.
-  </Card>
-  <Card title="Anti-Sniper Protection" icon="shield">
-    20% swap fee at launch decays to 1% over the first hour. Sniping is economically irrational.
-  </Card>
-</CardGroup>
-
----
-
-## Worst Case Scenarios
-
-Before you ape, know your downside:
-
-| Scenario | What happens | Your max loss |
-|----------|-------------|---------------|
-| Project team is bad | Refund before launch | 10% token penalty + 4% fee already paid |
-| Token dumps after launch | Claim Day 1, sell immediately | 90% of your token allocation (forfeited to community) |
-| You need capital during vesting | Sell your Ponzu Bottle NFT on secondary | Depends on secondary market price, but position is liquid |
-| Project never fills presale | Refund anytime | 10% token penalty + 4% fee |
-
-The 90% refund before launch is the floor. After launch, diamond-hand vesting means early exits are expensive. Know the tradeoff going in.
-
----
-
-## Key Resources
+## Key resources
 
 - **Website:** [ponzu.app](https://ponzu.app)
 - **Factory contract:** [`0x1155484c5fE614538d83c444f9a6dB662E6a7153`](https://etherscan.io/address/0x1155484c5fE614538d83c444f9a6dB662E6a7153)
 - **SDK:** [@ponzu_app/sdk on NPM](https://www.npmjs.com/package/@ponzu_app/sdk)
 - **MCP Server:** [@ponzu_app/mcp on NPM](https://www.npmjs.com/package/@ponzu_app/mcp)
-- **Transparency:** [SKILL.md](https://ponzu.app/SKILL.md) (full contract ABIs, addresses, and integration docs)
+- **Transparency:** [SKILL.md](https://ponzu.app/SKILL.md)
 - **Contract Addresses:** [All deployed contracts](/protocol/contract-addresses)
 - **Founder:** [@0xYuzu on X](https://x.com/0xYuzu)
-- **Email:** yuzu@ponzu.app

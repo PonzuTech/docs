@@ -1,6 +1,6 @@
 ---
 title: 'SDK Reference'
-description: 'TypeScript SDK for deploying tokens, buying presales, swapping, and farming on Ponzu. Works with viem on Ethereum mainnet and Sepolia.'
+description: 'TypeScript SDK for deploying tokens, buying presales, swapping, and farming on Ponzu.'
 ---
 
 ## Installation
@@ -8,8 +8,6 @@ description: 'TypeScript SDK for deploying tokens, buying presales, swapping, an
 ```bash
 npm install @ponzu_app/sdk viem
 ```
-
-The SDK wraps all Ponzu contract interactions: typed functions, automatic pricing math, ABI encoding, and event decoding.
 
 <Card
   title="@ponzu_app/sdk on NPM"
@@ -33,7 +31,7 @@ const wallet  = createWalletClient({ account, chain: mainnet, transport: http() 
 const client  = createPublicClient({ chain: mainnet, transport: http() })
 ```
 
-Replace `mainnet` with `sepolia` and use a Sepolia RPC for testnet.
+Replace `mainnet` with `sepolia` for testnet.
 
 ---
 
@@ -62,16 +60,16 @@ const result = await deploy(
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `owner` | `Address` | Wallet address that receives creator fees and treasury |
+| `owner` | `Address` | Wallet that receives creator fees and treasury |
 | `tokenName` | `string` | ERC-20 token name |
 | `tokenSymbol` | `string` | ERC-20 token symbol |
-| `metadata` | `string` | IPFS, Arweave, or HTTPS URL pointing to project metadata JSON |
-| `imageURI` | `string` | IPFS, Arweave, or HTTPS URL pointing to token image |
-| `targetEthRaise` | `bigint` | Target presale raise in wei. Minimum: 3 ETH mainnet, 0.1 ETH Sepolia |
+| `metadata` | `string` | IPFS, Arweave, or HTTPS URL to project metadata JSON |
+| `imageURI` | `string` | IPFS, Arweave, or HTTPS URL to token image |
+| `targetEthRaise` | `bigint` | Target presale raise in wei. Min: 3 ETH mainnet, 0.1 ETH Sepolia |
 
-**Cost:** 0.005 ETH creation fee + optional dev buy amount.
+**Cost:** 0.005 ETH creation fee + optional dev buy.
 
-**Returns:** Object with `addresses` containing all 8 deployed contracts:
+**Returns:**
 
 ```typescript
 result.addresses.token          // ERC-20 token
@@ -105,7 +103,7 @@ const tx = await buy(
 )
 ```
 
-Returns a Ponzu Bottle NFT representing the presale position.
+Returns a PonzuBottle NFT representing the presale position.
 
 ---
 
@@ -125,7 +123,7 @@ const tx = await refund(
 )
 ```
 
-Returns 90% of ETH. The 10% token penalty stays in the pool and redistributes pro-rata to remaining holders. Only available before launch.
+Returns 90% of ETH. The 10% token penalty redistributes pro-rata to remaining holders. Only before launch.
 
 ---
 
@@ -145,7 +143,7 @@ const tx = await claim(
 )
 ```
 
-One claim per Ponzu Bottle. Tokens vest linearly over 10 days (or 10 weeks). Claiming early forfeits unvested tokens to the Distributor.
+One claim per PonzuBottle. Tokens vest linearly over 10 days (or 10 weeks). Claiming early forfeits unvested tokens to the Distributor.
 
 ---
 
@@ -167,7 +165,7 @@ const tx = await swap(
 )
 ```
 
-1% swap fee (20% during first hour after launch, decaying linearly to 1%).
+1% swap fee. 20% during first hour after launch, decaying linearly to 1%.
 
 ---
 
@@ -176,10 +174,8 @@ const tx = await swap(
 ```typescript
 import { getAddresses } from '@ponzu_app/sdk'
 
-// Mainnet
 const addresses = getAddresses('mainnet')
-
-// Sepolia testnet
+// or
 const addresses = getAddresses('sepolia')
 
 // addresses.ponzuRecipe, .ponzuSwap, .ponzuRouter, .zapEth, .weth, etc.
@@ -189,7 +185,7 @@ const addresses = getAddresses('sepolia')
 
 ## MCP Server (AI Agent Integration)
 
-For AI agents (Claude Desktop, Cursor, Claude Code), use the MCP server instead of the SDK directly:
+For AI agents (Claude Desktop, Cursor, Claude Code):
 
 ```json
 {
@@ -206,7 +202,7 @@ For AI agents (Claude Desktop, Cursor, Claude Code), use the MCP server instead 
 }
 ```
 
-**17 tools available:**
+**17 tools:**
 
 | Category | Tools |
 |----------|-------|
@@ -231,6 +227,6 @@ Set `PONZU_NETWORK` to `sepolia` for testnet.
 
 ## Raw Contract Interaction
 
-If you prefer to interact with contracts directly without the SDK, see the [ABI Reference](/protocol/abi-reference) for all contract ABIs and usage examples with raw viem.
+For direct contract access without the SDK, see the [ABI Reference](/protocol/abi-reference).
 
 Factory contract (PonzuRecipe): [`0x1155484c5fE614538d83c444f9a6dB662E6a7153`](https://etherscan.io/address/0x1155484c5fE614538d83c444f9a6dB662E6a7153)

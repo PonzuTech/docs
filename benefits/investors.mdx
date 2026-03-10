@@ -1,158 +1,65 @@
 ---
-title: "For Investors"
-description: "90% refund before launch. Diamond-hand vesting rewards patience. Your position is a tradeable NFT. Liquidity locked permanently."
+title: "For Investors & Traders"
+description: "Tokens that can't die in minutes. 90% refund before launch. Conviction rewarded. Impatience becomes yield."
 ---
 
-## Why Ponzu
+Every mechanism in Ponzu is designed with the investor in mind. The goal is founder-investor alignment, not through coercion, but through economics. Nothing is locked. You can claim your tokens anytime, get a refund anytime, sell your position anytime. But every exit path is designed so that leaving doesn't create sell pressure on the token. Refunds return ETH at cost, not a market dump. Positions are NFTs you sell on secondary, not tokens you dump on the DEX. You can claim your ETH rewards whenever you want. But if you want to claim your tokens to sell them, you only get that right once, not death by a thousand cuts. The result is a token economy where the most profitable strategy is also the most aligned one.
 
-Every Ponzu launch enforces the same rules through immutable contracts. No insider allocations. No hidden OTC deals. No surprise unlocks. No admin keys that can change the rules after you buy in.
+## Why Ponzu is different
 
-The question isn't "will this rug?" The contracts make the classic rug mechanics impossible. The question is whether the project team will build something worth holding.
-
----
-
-## Protection Against Rugs
-
-### What the Contracts Prevent
-
-- **No team allocation.** 0% to team, VCs, or treasury at token creation. 69% to presale buyers, 31% to permanent DEX liquidity.
-- **Immutable contracts.** No admin keys. No upgrade proxies. No owner functions. The deployed bytecode is final. Verify it on Etherscan yourself.
-- **Permanent liquidity.** LP tokens are held by the Launcher contract. There is no `withdraw`, `remove`, or `rescue` function. Not time-locked (which implies an unlock). The withdrawal function does not exist in the code.
-- **Refund before launch.** Get 90% of your ETH back before the presale completes. The 10% token penalty redistributes pro-rata to remaining holders.
-
-### What the Contracts Enforce
-
-- **Diamond-hand vesting.** After launch, tokens vest linearly over 10 days (or 10 weeks). Claiming early forfeits unvested tokens to the Distributor, which sends them pro-rata to patient holders and farm stakers.
-- **Anti-sniper fees.** 20% swap fee at launch, decaying linearly to 1% over the first hour. Sniping a launch costs 20% of the trade on entry. Economically irrational at any reasonable position size.
-- **Fixed supply.** 1,000,000 tokens. No mint function in the contract. No inflation. No dilution. Ever.
-- **Transparent fees.** 4% presale fee (1% creator, 1% protocol, 1% Kioke holders, 1% order referrer). 1% swap fee (permanent). All verifiable on-chain.
-
-### What the Contracts Don't Prevent
-
-Be clear-eyed about what remains outside contract scope:
-
-- **Team abandonment.** The team can stop building after launch. Contracts enforce token mechanics, not team effort. Evaluate the team, not just the structure.
-- **Price decline.** Permanent liquidity means there's always a pool to sell into, but it doesn't guarantee price. If the project fails to deliver value, the token price reflects that.
-- **Low trading volume.** ETH rewards come from swap fees. A project with no trading volume generates no ETH rewards. Rewards scale with activity, not with time held.
+- **These tokens can't die in minutes.** Every token sold in the presale was paid for. No team allocation, no advisor tokens, no treasury overhang, no free tokens. 69% to presale buyers, 31% as liquidity. There is no hidden supply waiting to dump on you.
+- **You can always get out.** During the presale, you can claim a 90% refund on what you paid, anytime before launch. You're either graduating with the project or getting your money back. No locked capital, no hoping the team follows through on promises.
+- **Conviction is rewarded.** Diamond-hand vesting means you can only claim your tokens once. Claim early, keep a fraction, leave the rest for those who stayed. The longer you wait, the more you get, including bonus tokens forfeited by those who couldn't. Impatience becomes yield for the patient.
+- **Lifetime ETH rewards.** 1% of every swap on PonzuSwap flows through the Distributor. Your Ponzu Bottle earns ETH as long as the project trades. Claim ETH anytime, as often as you want, without affecting your token position. Even after vesting, leave your tokens unclaimed and keep earning indefinitely.
 
 ---
 
-## Linear Pricing, Public Curve
+## How it works
+### Linear pricing
 
-| Feature | Ponzu | Traditional Launchpad |
-|---------|-------|----------------------|
-| Pre-sale rounds | None. One public presale. | Seed, private, KOL rounds before public |
-| Pricing | Linear curve, on-chain, early buyers get better prices | VCs get 90% discounts months before public |
-| Team allocation | 0% | 20-40% |
-| Refund option | 90% ETH back before launch | Usually impossible |
-| Vesting | Code-enforced, identical rules for all positions | Promise-based, different schedules for insiders |
-| Liquidity lock | Permanent (no withdrawal function) | Time-locked (unlocks eventually) |
-| Fee visibility | All on-chain, 4 fixed rates | Often hidden in supply inflation |
+Price starts at 10% of the target market cap and increases linearly. A project targeting \$1M starts at \$100K. The curve is set at deployment and cannot be changed. No hidden rounds. No OTC deals. No insider discounts.
 
-Linear pricing means the first buyer pays 10% of what the last buyer pays. The curve is set at deployment and cannot be changed. No hidden rounds happened before the presale opened.
+Your presale allocation is an NFT — a **Ponzu Bottle** (ERC-721) that holds your entire position: token allocation, ETH contributed, vesting status, accumulated ETH rewards.
 
----
 
-## Your Position is an NFT
+###  90% Refunds 
+Before launch, you can claim a 90% refund on what you paid, anytime. The thinking shifts from "is this a rug?" to "is this team worth backing?" If the presale has reached \$400K and you bought in at \$100K, you have a choice: take the 90% ETH refund, or sell the Ponzu Bottle on secondary. New owner inherits everything — token claim rights, refund option, accumulated ETH rewards. There is liquidity, but no sell pressure, no dumping. Only refunds. Rest until launch.
 
-When you buy into a presale, you receive a **Ponzu Bottle** (ERC-721). This NFT represents your entire position: token allocation, ETH contributed, vesting status, and accumulated ETH rewards.
+### Diamond-hand vesting
 
-**Why this matters for large positions:**
-- **Liquidity without dumping.** Need to exit a $500K position before claiming? Sell the Ponzu Bottle on secondary markets. The token supply is unaffected. No price impact on the project's DEX pool.
-- **Price discovery.** A presale position in a project valued at $400K can be listed on OpenSea. Buyers evaluate the project's trajectory, not just the token's spot price.
-- **Full transfer of rights.** New owner inherits the complete position: token claim rights, refund option (if pre-launch), and accumulated ETH rewards.
+Diamond-hand vesting flips traditional vesting on its head.
+Traditional vesting unlocks gradually over months. The problem: linear vesting creates thousands of micro-transactions. Claim a little today, a little tomorrow, sell continuously. Predictable, constant sell pressure. Cliffs only delay this death by a thousand cuts. For liquid tokens, they also introduce sell pressure from investors hedging their exposure since they cant exit by adding short positions.
 
----
+After launch, you can claim anytime. But you can only claim once.
 
-## The Vesting Decision
+If the token trades at 20x your entry price on Day 1, an early claim gives you 10%, still a 2x overnight, the rest gets redistributed. Waiting to the end gives you 100%, plus a share of the redistributed tokens as a bonus.
 
-After launch, you choose when to claim your tokens. One claim, one time, irreversible.
+A 10-day vest means the project has 10 days to prove itself. A 10-month vest gives the token more time to build traction. For the first time, tokens now have time baked into the contract. 
 
-| Claim Timing | Tokens You Receive | Tokens Forfeited to Community |
-|-------------|-------------------|------------------------------|
-| Day 1 of 10 | 10% of allocation | 90% |
-| Day 3 of 10 | 30% of allocation | 70% |
-| Day 5 of 10 | 50% of allocation | 50% |
-| Day 10 of 10 | 100% + bonus tokens | 0% |
 
-### Worked Example: $500K Position
+### ETH rewards
 
-Suppose you deploy $500K into a presale that raises $2M total. You hold 25% of the presale (172,500 tokens out of 690,000).
-
-If 30% of other holders claim on Day 1 (forfeiting 90% of their tokens):
-- They forfeit approximately 139,725 tokens to the Distributor
-- The Distributor routes 40% of those tokens to remaining presale holders pro-rata
-- Your share of forfeited tokens: ~18,630 bonus tokens (your 25% of the 40% presale allocation)
-- You now hold 172,500 + 18,630 = 191,130 tokens at full vest
-
-Your patience earned you a 10.8% bonus on top of your full allocation. And that's only from the presale holder portion of the Distributor. Farm stakers receive another 40%.
-
-### The Math on Early Claims
-
-If the token trades at 20x your entry price on Day 1, an immediate claim gives you 10% of your tokens at 20x = 2x return. Waiting to Day 10 gives you 100% at whatever the price is then, plus bonus tokens from everyone who couldn't wait. The vesting curve makes patience the default profitable strategy for anyone with a multi-day time horizon.
+Your Ponzu Bottle accumulates ETH from the Distributor while vesting and beyond. 1% of every swap on PonzuSwap flows through. Claim ETH anytime, as often as you want, without affecting your token position. There is no deadline to claim.
 
 ---
 
-## ETH Rewards
-
-While vesting, your Ponzu Bottle accumulates ETH from the Distributor. The Distributor collects 1% of every swap on PonzuSwap for that token pair. ETH rewards are claimable repeatedly at any time without affecting your token position.
-
-### How Rewards Scale
-
-ETH rewards are a function of trading volume, not time.
-
-| Daily Trading Volume | Daily Swap Fees (1%) | Annual to Presale Holders (20% of fees) |
-|---------------------|---------------------|--------------------------------------|
-| $10K | $100 | ~$7,300 |
-| $100K | $1,000 | ~$73,000 |
-| $1M | $10,000 | ~$730,000 |
-
-Your share is proportional to your position size relative to unclaimed presale holders. As others claim their tokens and exit the presale pool, your percentage of ETH rewards increases.
-
-Even after your vesting period completes, you can leave your tokens unclaimed and continue earning ETH indefinitely. There is no deadline to claim.
-
----
-
-## Position Exit Mechanics
-
-For large positions, exit strategy matters as much as entry.
-
-**Before launch (presale active):**
-- Refund: 90% of ETH back. 10% token penalty goes to remaining holders.
-- Sell Ponzu Bottle on secondary. Full position transfers to buyer.
-
-**After launch (tokens vesting):**
-- Sell Ponzu Bottle on secondary markets (full position, vesting included).
-- Wait for vesting to complete, claim tokens, sell into PonzuSwap liquidity pool.
-
-**Liquidity depth consideration:** 31% of total token supply (310,000 tokens) plus their ETH-side pair are permanently in the liquidity pool. On a $2M raise, approximately $620K of ETH seeds the pool at launch (31% of raise). Your exit slippage depends on your position size relative to pool depth. A $500K sell against a $620K pool would have significant slippage. A $50K sell would not. For large positions, the Ponzu Bottle secondary market or gradual selling across multiple transactions will typically give better execution.
-
----
-
-## Before You Buy
+## Before you buy
 
 <AccordionGroup>
   <Accordion title="Is the team worth backing at this valuation?">
-    The contracts prevent rug pulls. They do not prevent bad products. Evaluate the team, the roadmap, and the traction the same way you would any investment. The 90% refund option means you can exit with most of your capital if your thesis changes before launch.
-  </Accordion>
-  <Accordion title="What's the target raise and current progress?">
-    Linear pricing means early buyers get better prices. Check how much has already sold, what the current per-token price is, and how much remains. `tokensAvailable()` on the Presale contract returns remaining supply.
-  </Accordion>
-  <Accordion title="What's the vesting duration?">
-    10 days or 10 weeks. Set at deployment, immutable. 10-day vesting (the default) means your full allocation plus bonuses are available on Day 10. 10-week vesting is rarer and used by projects that want longer alignment periods.
+    The contracts prevent rug pulls. They do not prevent bad products. Evaluate the team and the traction the same way you would any investment. The 90% refund means you can exit with most of your capital if your thesis changes before launch.
   </Accordion>
   <Accordion title="What's my worst-case loss?">
-    Before launch: 10% of your position (the refund penalty). After launch: 100% of your position if the token price goes to zero, minus any ETH rewards already claimed. Permanent liquidity guarantees there is always a pool to sell into, but does not guarantee the price in that pool.
+    Before launch: ~13.6% (4% fee + 10% token penalty on refund). After launch: 100% if the token goes to zero, minus any ETH rewards already claimed.
   </Accordion>
   <Accordion title="Can I deploy $500K+ in a single presale?">
-    Yes. Linear pricing means no bonding-curve slippage. Your per-token price at any moment is the same regardless of order size. The only practical limit is the presale's remaining token supply.
+    Yes. Linear pricing means no bonding-curve slippage. Your per-token price at any moment is the same regardless of order size.
+  </Accordion>
+  <Accordion title="What the contracts don't prevent">
+    **Team abandonment.** The team can stop building after launch. Contracts enforce token mechanics, not team effort. Evaluate the team, not just the structure.
+
+    **Price decline.** Permanent liquidity means there's always a pool to sell into. It doesn't guarantee the price.
+
+    **Low trading volume.** ETH rewards come from swap fees. A project with no trading volume generates no ETH rewards.
   </Accordion>
 </AccordionGroup>
-
----
-
-## The Bottom Line
-
-You can't fake time. Either you held for 10 days or you didn't. In a market where everything else can be manufactured (followers, volume, charts, attention), time-based conviction is the one signal that can't be bought.
-
-Ponzu makes patience the most profitable strategy. Not because anyone promises it. Because the contracts enforce it.

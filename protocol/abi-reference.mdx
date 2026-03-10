@@ -1,14 +1,94 @@
 ---
 title: "ABI Reference"
-description: "Contract ABIs for all Ponzu protocol interactions: presale, swap, farming, and factory deployment."
+description: "Contract ABIs for presale, swap, farming, and factory deployment."
 ---
-
-
 
 ---
 ## PonzuRecipe (Factory)
 
-See the [PonzuRecipe page](/protocol/recipe) for the full `craftPonzu` ABI and deployment guide.
+```typescript
+const PONZU_RECIPE = '0x1155484c5fE614538d83c444f9a6dB662E6a7153'
+
+const RECIPE_ABI = parseAbi([
+  'function craftPonzu((address owner, address keyContract, uint256 initialBuyAmount, uint256 vestingDuration, bytes32 pricingStrategyTemplate, bytes pricingStrategyData, bytes feeStrategyData, string tokenName, string tokenSymbol, string metadata, string imageURI) params) payable',
+])
+```
+
+### Deploy a Token
+```typescript
+import { parseEther, parseAbi, keccak256, toBytes, encodeAbiParameters } from 'viem'
+
+// Calculate pricing
+const targetRaise   = parseEther('3')
+const endPriceWei   = (targetRaise * 20n) / (11n * 690_000n)
+const startPriceWei = endPriceWei / 10n
+
+const pricingStrategyTemplate = keccak256(toBytes('LinearPricingStrategy'))
+const pricingStrategyData = encodeAbiParameters(
+  [{ type: 'uint256' }, { type: 'uint256' }],
+  [startPriceWei, endPriceWei],
+)
+
+const devBuyEth = parseEther('0.1')  // optional first purchase (0n to skip)
+
+const params = {
+  owner:                   account.address,
+  keyContract:             '0x0000000000000000000000000000000000000000',
+  initialBuyAmount:        devBuyEth,
+  vestingDuration:         864000n,               // 10 days in seconds
+  pricingStrategyTemplate,
+  pricingStrategyData,
+  feeStrategyData:         '0x',
+  tokenName:               'My Token',
+  tokenSymbol:             'MYTKN',
+  metadata:                'ipfs://Qm...',
+  imageURI:                'ipfs://Qm...',
+}
+
+// 0.005 ETH creation fee + dev buy
+const value = parseEther('0.005') + devBuyEth
+
+const hash = await wallet.writeContract({
+  address: PONZU_RECIPE,
+  abi: RECIPE_ABI,
+  functionName: 'craftPonzu',
+  args: [params],
+  value,
+})
+```
+
+### Parse Deployed Addresses
+```typescript
+const ponzuCraftedTopic = keccak256(toBytes(
+  'PonzuCrafted(address,string,(address,address,address,address,address,address,address,address,address))'
+))
+
+const receipt = await publicClient.waitForTransactionReceipt({ hash })
+const log = receipt.logs.find(l => l.topics[0] === ponzuCraftedTopic)!
+
+const [, , addresses] = decodeAbiParameters(
+  [
+    { type: 'string' },
+    {
+      type: 'tuple',
+      components: [
+        { name: 'project',       type: 'address' },
+        { name: 'operator',      type: 'address' },
+        { name: 'token',         type: 'address' },
+        { name: 'presale',       type: 'address' },
+        { name: 'launcher',      type: 'address' },
+        { name: 'distributor',   type: 'address' },
+        { name: 'farm',          type: 'address' },
+        { name: 'ponzuBottle',   type: 'address' },
+        { name: 'liquidityCard', type: 'address' },
+      ],
+    },
+  ],
+  log.data,
+)
+```
+
+Full deployment guide with pricing math: [PonzuRecipe](/protocol/recipe).
 
 ---
 ## Presale
@@ -38,7 +118,7 @@ await wallet.writeContract({
   address: presaleAddress,
   abi: PRESALE_ABI,
   functionName: 'presale',
-  args: [minTokensOut, ZERO, ZERO],   // (minTokenAmount, platformReferrer, orderReferrer)
+  args: [minTokensOut, ZERO, ZERO],
   value: ethToSpend,
 })
 ```
@@ -66,7 +146,7 @@ const launchTime = await publicClient.readContract({
 await wallet.writeContract({
   address: presaleAddress, abi: PRESALE_ABI,
   functionName: 'refund',
-  args: [tokensToRefund],  // amount of tokens to refund
+  args: [tokensToRefund],
 })
 ```
 
@@ -125,7 +205,7 @@ const ERC20_ABI = parseAbi([
 ])
 ```
 
-### Buy Tokens (ETH → Token)
+### Buy Tokens (ETH -> Token)
 ```typescript
 const ethIn    = parseEther('0.1')
 const minOut   = 0n
@@ -139,7 +219,7 @@ await wallet.writeContract({
 })
 ```
 
-### Sell Tokens (Token → ETH)
+### Sell Tokens (Token -> ETH)
 ```typescript
 // Step 1: Approve
 await wallet.writeContract({
@@ -177,7 +257,7 @@ const FARM_ABI = parseAbi([
 ])
 ```
 
-### ZapETH → LP (One Transaction)
+### ZapETH -> LP (One Transaction)
 ```typescript
 const expectedLP = await publicClient.readContract({
   address: ZAP_ETH, abi: ZAP_ABI,
@@ -237,9 +317,8 @@ await wallet.writeContract({
 })
 ```
 
-
 ---
 
 ## Full Reference
 
-The complete, unabridged ABI reference with all contract interactions is available at [ponzu.app/SKILL.md](https://ponzu.app/SKILL.md).
+Complete unabridged ABI: [ponzu.app/SKILL.md](https://ponzu.app/SKILL.md).

@@ -1,17 +1,19 @@
 ---
 title: "Diamond-Hand Vesting"
-description: "Claim early and forfeit tokens to patient holders. One claim only. The mechanism that turns exit timing into a conviction signal."
+description: "Claim early and forfeit tokens to patient holders. One claim. The weak hands subsidize the diamond hands."
 ---
 
 ## How It Works
 
-After launch, presale holders have a vesting period: 10 days (Yellow Bottle) or 10 weeks (Green Bottle), depending on the founder's choice at deployment. Tokens vest linearly from the moment of launch.
+After launch, presale holders have a vesting period: 10 days (Yellow Bottle) or 10 weeks (Green Bottle). Tokens vest linearly from the moment of launch.
 
 ```
-vestedAmount = (totalAllocation × elapsedTime) / vestingDuration
+vestedAmount = (totalAllocation * elapsedTime) / vestingDuration
 ```
 
-You can claim once. You choose your moment. You receive the vested portion. Everything unvested goes to the Distributor, which routes it to remaining presale holders, farm stakers, and the project treasury. Your Ponzu Bottle NFT is burned.
+You get one claim. Pick your moment. You receive the vested portion. Everything unvested goes to the Distributor, which routes it to remaining presale holders, farm stakers, and the project treasury. Your Ponzu Bottle NFT is burned.
+
+One claim forces a decision. No drip-selling. No constant sell pressure trickling into the market.
 
 | Claim Day (10-day vest) | You Receive | Forfeited to Community |
 |-------------------------|-------------|----------------------|
@@ -22,15 +24,7 @@ You can claim once. You choose your moment. You receive the vested portion. Ever
 | Day 7 | 70% | 30% |
 | Day 10+ | 100% + pro-rata share of all forfeitures | 0% |
 
-**On-chain:** Call `getVestedAmount(tokenId)` to check how much has vested for any Ponzu Bottle. Call `claim(tokenId)` to execute your one-time claim.
-
----
-
-## Why One Claim?
-
-Multiple partial claims recreate the problem vesting is supposed to solve. Take 10% on Day 1, 20% more on Day 3, 30% more on Day 5. That's continuous vesting with extra steps. Same constant sell pressure dripping into the market.
-
-One claim forces a decision. You pick your moment. The chart looks different because of it. Instead of tokens hitting the market hour after hour, conviction separates from speculation in a single action.
+**On-chain:** `getVestedAmount(tokenId)` to check vesting. `claim(tokenId)` to execute your one-time claim.
 
 ---
 
@@ -41,10 +35,10 @@ Holders who wait the full vesting period receive their original allocation plus 
 **Worked example:**
 
 - Total presale: 690,000 tokens across 100 buyers
-- You bought 10,000 tokens (your Ponzu Bottle holds 10,000)
-- 60 buyers claim on Day 1, each receiving 10% of their allocation and forfeiting 90%
-- Those 60 buyers held ~414,000 tokens combined. They forfeited ~372,600 tokens
-- Forfeited tokens go to the Distributor, which splits them:
+- You bought 10,000 tokens
+- 60 buyers claim on Day 1, each receiving 10% and forfeiting 90%
+- Those 60 held ~414,000 tokens combined. They forfeited ~372,600 tokens
+- Forfeited tokens go to the Distributor:
 
 | Recipient | Share of Forfeitures |
 |-----------|---------------------|
@@ -55,44 +49,42 @@ Holders who wait the full vesting period receive their original allocation plus 
 
 Your share of the presale holder portion: 10,000 / ~276,000 remaining presale tokens = ~3.6%. You receive ~5,366 bonus tokens on top of your 10,000.
 
-**Note:** As more presale holders claim and exit, the presale holder share (40%) shifts toward 0% and the farm staker share (40%) shifts toward 80%. The Distributor rebalances dynamically. Check the [Distributor page](/rewards/distributor) for the full allocation logic.
+**Note:** As more presale holders claim and exit, the presale holder share (40%) shifts toward 0% and the farm staker share (40%) shifts toward 80%. The Distributor rebalances dynamically. See the [Distributor page](/rewards/distributor) for the full allocation logic.
 
 ---
 
-## Early Claims Are Not Punished
+## Exit Early, But Leave the Rest
 
-Each holder has different circumstances. Someone who needs liquidity early should be able to access it. If the token has pumped 20x since presale, claiming 10% on Day 1 is still a 2x return in a single day.
+You can leave any time. The cost of leaving decreases with patience.
 
-You can leave any time. The cost of leaving decreases with patience. Impatient capital exits, forfeiting tokens to patient capital. By the end of the vesting period, the remaining holders are those who chose to stay.
-
-No one is locked in. Everyone picks their moment.
+If the token has pumped 20x since presale, claiming 10% on Day 1 is still a 2x return in a single day. Nobody is punished. Impatient capital exits, leaving behind tokens for the patient. By the end of the vesting period, the remaining holders are those who chose to stay. You can't rush fermentation.
 
 ---
 
 ## ETH Rewards (Separate from Token Claim)
 
-While vesting, Ponzu Bottle holders accumulate ETH rewards from the Distributor. These come from the 1% swap fee on every PonzuSwap trade. ETH rewards can be claimed at any time, repeatedly, without affecting your token claim.
+While vesting, Ponzu Bottle holders accumulate ETH rewards from the Distributor. These come from the 1% swap fee on every PonzuSwap trade.
 
 Call `claimETH(tokenId)` whenever you want. This does not burn your Ponzu Bottle. This does not count as your one-time token claim.
 
-**After vesting ends:** If you haven't claimed your tokens yet, your Ponzu Bottle stays active. You keep earning ETH from swap fees indefinitely. There is no deadline to claim tokens. Your Ponzu Bottle earns ETH rewards as long as it exists.
+After vesting ends, if you haven't claimed tokens, your Ponzu Bottle stays active. You keep earning ETH from swap fees indefinitely. No deadline. The smart contracts handle the economics.
 
 **Distributor ETH split for presale holders:** 20% of all Distributor ETH goes to presale holders (shifting toward 0% as holders claim and exit). See the [Distributor page](/rewards/distributor) for exact allocation formulas.
 
 ---
 
-## Choosing Your Vesting Duration (For Founders)
+## Vesting Duration (Founder Choice)
 
-This is a deployment decision. Once set, it cannot be changed.
+Set at deployment. Cannot be changed.
 
-| Option | Duration | Ponzu Bottle Color | Best For |
-|--------|----------|-------------------|----------|
-| Yellow Bottle | 10 days | Yellow | Projects where community expects fast liquidity. Meme tokens, quick validation cycles |
-| Green Bottle | 10 weeks | Green | Projects building over months. The longer vesting period creates deeper conviction filtering and larger forfeit bonuses for patient holders |
+| Option | Duration | Ponzu Bottle Color |
+|--------|----------|-------------------|
+| Yellow Bottle | 10 days | Yellow |
+| Green Bottle | 10 weeks | Green |
 
-Both options use the same linear vesting formula. The only difference is duration.
+Both use the same linear vesting formula. Only the duration differs.
 
-**Founder dev buy:** If you used the dev buy option at deployment, your own Ponzu Bottle vests on the same schedule as everyone else. Your community can verify on-chain that you're subject to the same rules.
+If you used the dev buy option at deployment, your own Ponzu Bottle vests on the same schedule as everyone else. Your community can verify on-chain that you're subject to the same rules.
 
 ---
 
@@ -104,6 +96,4 @@ Day 1: Keep 10%, forfeit 90%.
 Day 5: Keep 50%, forfeit 50%.
 Day 10: Keep 100% + your share of every forfeiture before you.
 
-Claiming early is allowed. It's just expensive. A trader who claims 20,000 tokens on Day 1 leaves 180,000 for the holders who stayed. The patient holder isn't trapped. They stay because waiting is the better move. People self-select into their natural position.
-
-Patience is the alignment mechanism. The vesting period filters for conviction without coercing anyone to stay.
+A trader who claims 20,000 tokens on Day 1 leaves 180,000 for the holders who stayed. The patient holder stays because waiting is the better move. People self-select into their natural position. Conviction over time.

@@ -1,0 +1,98 @@
+---
+title: "The Launch"
+description: "When the presale sells out, the Launcher creates permanent DEX liquidity on PonzuSwap. Permissionless. Automatic. Irreversible."
+---
+
+## Launch Trigger
+
+When all 690,000 presale tokens are sold, the `triggerLaunch()` function becomes callable. Anyone can call it. No admin action required.
+
+```
+require(tokensSold == 690000 && launched == false)
+```
+
+**For founders:** You don't need to be online. You don't need to push a button. Any wallet can trigger the launch once the presale fills. If you want to be the one to call it, you can. But if you're asleep, someone else will.
+
+---
+
+## What Happens
+
+The launch sequence executes atomically in a single transaction:
+
+<Steps>
+  <Step title="ETH Split">
+    The presale pool (96% of all ETH contributed, after the 4% fee was already distributed during purchases) splits:
+    - **91%** to the Launcher contract for liquidity creation
+    - **9%** directly to the project creator's wallet as immediate runway
+
+    **Example:** Presale collected 100 ETH into the pool. 91 ETH goes to liquidity. 9 ETH goes to the founder. The founder also already received ~1.04 ETH in creator fees during the presale (1% of the ~104 ETH total before fees).
+  </Step>
+  <Step title="Liquidity Creation">
+    The Launcher pairs 310,000 tokens (31% of total supply, reserved at deployment) with the 91% ETH and creates a TKN/WETH trading pair on PonzuSwap.
+  </Step>
+  <Step title="Permanent LP Lock">
+    LP tokens are sent to the Presale contract. There is **no `withdrawLP()` function** in the contract. No admin function. No timelock that expires. No multisig override. The LP tokens sit in a contract with no code path to remove them.
+
+    **Verification:** Read the Presale contract source on Etherscan. Search for any function that transfers LP tokens out. There isn't one.
+  </Step>
+  <Step title="Vesting Begins">
+    The `launchTime` timestamp is set on-chain. Diamond-hand vesting starts from this block. Presale holders now have 10 days (Yellow Bottle) or 10 weeks (Green Bottle) to claim their tokens.
+  </Step>
+  <Step title="Trading Opens">
+    The token is immediately tradeable on PonzuSwap. Anti-sniper fee protection is active for the first hour.
+  </Step>
+</Steps>
+
+---
+
+## Anti-Sniper Fee Decay
+
+The first minutes after any token goes live are where bots extract the most value. They buy the moment liquidity appears, front-run retail buyers, and dump within minutes.
+
+Ponzu makes this strategy unprofitable. Swap fees start at 20% and decay linearly to 1% over the first 60 minutes:
+
+| Time After Launch | Swap Fee | Round-Trip Cost (buy + sell) |
+|-------------------|----------|------------------------------|
+| 0 minutes | 20% | ~36% loss |
+| 15 minutes | 15.25% | ~28% loss |
+| 30 minutes | 10.5% | ~20% loss |
+| 45 minutes | 5.75% | ~11% loss |
+| 60 minutes | 1% (permanent) | ~2% loss |
+
+**How round-trip cost works:** A sniper buying at launch pays 20% fee on the buy (receiving 80% of expected tokens). Selling immediately costs another 20% fee on the sell. Net result: they keep ~64% of their original ETH. A token would need to pump 56% in the same block just to break even.
+
+The fees don't disappear. They flow to the Distributor, which routes them to presale holders, farm stakers, and the project treasury. Snipers who try anyway end up subsidizing patient holders.
+
+**On-chain:** The fee decay is calculated from `launchTime` using `getCurrentFee()`. After 60 minutes, the fee is permanently 1%.
+
+---
+
+## Price Discovery
+
+The initial DEX price is set by the ratio of assets deposited into the PonzuSwap pool:
+
+```
+initialPrice = (91% of presale pool ETH) / 310,000 tokens
+```
+
+**Example:** The presale pool holds 100 ETH at launch (this is the 96% that remained after fees were distributed during purchases). 91 ETH + 310,000 tokens go to the pool. Initial price = 91 / 310,000 = 0.000294 ETH per token.
+
+**Relationship to presale price:** The last presale buyer paid roughly `endPrice` per token. The initial DEX price will be close to this value but not identical, because 31% of supply (the liquidity tokens) were never sold in the presale. The exact ratio depends on the target raise and how the AMM curve maps to the linear presale curve.
+
+From this point, the market determines price. The pool has permanent liquidity. Buyers and sellers trade against it. The chart is whatever the community makes it.
+
+---
+
+## For Founders
+
+Every traditional token launch is a sequence of manual steps: deploy the token, run a presale, deploy liquidity, lock the LP, set up vesting, distribute tokens. Every step requires trust. Every step where the founder has control is a step where they could rug.
+
+Ponzu compresses the entire sequence into two moments: deploy (one transaction) and launch (automatic, permissionless). Between those two moments, the presale runs. After launch, vesting and farming run. The contracts handle everything.
+
+The question is no longer "will the dev lock liquidity?" or "will they distribute tokens from the multisig?" Those answers are encoded in the contracts at deployment. They cannot be changed. The only remaining question for any Ponzu project is whether the product itself has value.
+
+You set the parameters. You deploy. Then you build product while the contracts handle the financial infrastructure.
+
+<Card title="What you deploy" icon="code" href="/raise/founder-details">
+  See the full deployment guide, revenue breakdown, and SDK reference.
+</Card>

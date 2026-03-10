@@ -1,0 +1,245 @@
+---
+title: "ABI Reference"
+description: "Contract ABIs for all Ponzu protocol interactions: presale, swap, farming, and factory deployment."
+---
+
+
+
+---
+## PonzuRecipe (Factory)
+
+See the [PonzuRecipe page](/protocol/recipe) for the full `craftPonzu` ABI and deployment guide.
+
+---
+## Presale
+
+```typescript
+const PRESALE_ABI = parseAbi([
+  'function presale(uint256 minTokenAmount, address platformReferrer, address orderReferrer) payable',
+  'function refund(uint256 tokenAmount)',
+  'function claim()',
+  'function claimETH(uint256 tokenId)',
+  'function triggerLaunch()',
+  'function tokensAvailable() view returns (uint256)',
+  'function launched() view returns (bool)',
+  'function launchTime() view returns (uint256)',
+  'function purchases(uint256 tokenId) view returns (uint256)',
+  'function ethContributions(uint256 tokenId) view returns (uint256)',
+])
+```
+
+### Buy Tokens
+```typescript
+const ethToSpend   = parseEther('0.1')
+const minTokensOut = 0n    // slippage guard
+const ZERO = '0x0000000000000000000000000000000000000000'
+
+await wallet.writeContract({
+  address: presaleAddress,
+  abi: PRESALE_ABI,
+  functionName: 'presale',
+  args: [minTokensOut, ZERO, ZERO],   // (minTokenAmount, platformReferrer, orderReferrer)
+  value: ethToSpend,
+})
+```
+
+### Read Presale State
+```typescript
+const tokensAvailable = await publicClient.readContract({
+  address: presaleAddress, abi: PRESALE_ABI,
+  functionName: 'tokensAvailable',
+})
+
+const launched = await publicClient.readContract({
+  address: presaleAddress, abi: PRESALE_ABI,
+  functionName: 'launched',
+})
+
+const launchTime = await publicClient.readContract({
+  address: presaleAddress, abi: PRESALE_ABI,
+  functionName: 'launchTime',
+})
+```
+
+### Refund (Before Launch)
+```typescript
+await wallet.writeContract({
+  address: presaleAddress, abi: PRESALE_ABI,
+  functionName: 'refund',
+  args: [tokensToRefund],  // amount of tokens to refund
+})
+```
+
+### Trigger Launch (When Sold Out)
+```typescript
+await wallet.writeContract({
+  address: presaleAddress, abi: PRESALE_ABI,
+  functionName: 'triggerLaunch',
+  args: [],
+})
+```
+
+### Claim Vested Tokens (One-Time)
+```typescript
+await wallet.writeContract({
+  address: presaleAddress, abi: PRESALE_ABI,
+  functionName: 'claim',
+  args: [],
+})
+```
+
+### Claim ETH Rewards (Repeatable)
+```typescript
+await wallet.writeContract({
+  address: presaleAddress, abi: PRESALE_ABI,
+  functionName: 'claimETH',
+  args: [bottleTokenId],
+})
+```
+
+---
+
+## PonzuSwap (DEX)
+
+```typescript
+const PONZU_SWAP_FACTORY = '0x1DCA548D67938E6162f0756985cC3e539Aae30C2'
+const PONZU_ROUTER       = '0xb90BD8EA30dE3b1DF07Eb574374229F4213F649e'
+const WETH               = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+
+const FACTORY_ABI = parseAbi([
+  'function getPair(address tokenA, address tokenB) view returns (address pair)',
+])
+
+const ROUTER_ABI = parseAbi([
+  'function swapExactETHForTokens(uint256 amountOutMin, address[] path, address to, uint256 deadline) payable returns (uint256[] amounts)',
+  'function swapExactTokensForETH(uint256 amountIn, uint256 amountOutMin, address[] path, address to, uint256 deadline) returns (uint256[] amounts)',
+])
+
+const PAIR_ABI = parseAbi([
+  'function getReserves() view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)',
+  'function approve(address spender, uint256 amount) returns (bool)',
+])
+
+const ERC20_ABI = parseAbi([
+  'function approve(address spender, uint256 amount) returns (bool)',
+])
+```
+
+### Buy Tokens (ETH → Token)
+```typescript
+const ethIn    = parseEther('0.1')
+const minOut   = 0n
+const deadline = BigInt(Math.floor(Date.now() / 1000) + 300)
+
+await wallet.writeContract({
+  address: PONZU_ROUTER, abi: ROUTER_ABI,
+  functionName: 'swapExactETHForTokens',
+  args: [minOut, [WETH, tokenAddress], account.address, deadline],
+  value: ethIn,
+})
+```
+
+### Sell Tokens (Token → ETH)
+```typescript
+// Step 1: Approve
+await wallet.writeContract({
+  address: tokenAddress, abi: ERC20_ABI,
+  functionName: 'approve',
+  args: [PONZU_ROUTER, tokenAmountIn],
+})
+
+// Step 2: Swap
+await wallet.writeContract({
+  address: PONZU_ROUTER, abi: ROUTER_ABI,
+  functionName: 'swapExactTokensForETH',
+  args: [tokenAmountIn, minEthOut, [tokenAddress, WETH], account.address, deadline],
+})
+```
+
+---
+
+## Farm (LP Staking)
+
+```typescript
+const ZAP_ETH = '0x33a1FB28125e3a396743Ac40B43f56499a13575D'
+
+const ZAP_ABI = parseAbi([
+  'function calculateExpectedLP(address tokenB, uint256 ethAmount) view returns (uint256)',
+  'function zapETHToLP(address tokenB, uint256 minLPTokens) payable returns (uint256 lpAmount)',
+])
+
+const FARM_ABI = parseAbi([
+  'function stake(uint256 amount)',
+  'function stakeNewCard(uint256 amount)',
+  'function unstake(uint256 cardId)',
+  'function claim(uint256 cardId)',
+  'function claimETH(uint256 cardId)',
+])
+```
+
+### ZapETH → LP (One Transaction)
+```typescript
+const expectedLP = await publicClient.readContract({
+  address: ZAP_ETH, abi: ZAP_ABI,
+  functionName: 'calculateExpectedLP',
+  args: [tokenAddress, ethAmount],
+})
+
+const slippage = 50n  // 0.5%
+const minLP = expectedLP * (10000n - slippage) / 10000n
+
+await wallet.writeContract({
+  address: ZAP_ETH, abi: ZAP_ABI,
+  functionName: 'zapETHToLP',
+  args: [tokenAddress, minLP],
+  value: ethAmount,
+})
+```
+
+### Stake LP
+```typescript
+// Approve LP to Farm
+await wallet.writeContract({
+  address: pairAddress, abi: PAIR_ABI,
+  functionName: 'approve',
+  args: [farmAddress, lpAmount],
+})
+
+// Stake (mint new LiquidityCard)
+await wallet.writeContract({
+  address: farmAddress, abi: FARM_ABI,
+  functionName: 'stakeNewCard',
+  args: [lpAmount],
+})
+```
+
+### Claim Rewards
+```typescript
+// Token rewards (one-time per card)
+await wallet.writeContract({
+  address: farmAddress, abi: FARM_ABI,
+  functionName: 'claim', args: [cardId],
+})
+
+// ETH rewards (repeatable)
+await wallet.writeContract({
+  address: farmAddress, abi: FARM_ABI,
+  functionName: 'claimETH', args: [cardId],
+})
+```
+
+### Unstake
+```typescript
+// Full withdrawal. Burns LiquidityCard. May apply early exit penalty.
+await wallet.writeContract({
+  address: farmAddress, abi: FARM_ABI,
+  functionName: 'unstake', args: [cardId],
+})
+```
+
+
+---
+
+## Full Reference
+
+The complete, unabridged ABI reference with all contract interactions is available at [ponzu.app/SKILL.md](https://ponzu.app/SKILL.md).

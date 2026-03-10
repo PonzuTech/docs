@@ -1,0 +1,158 @@
+---
+title: "Dynamic Fees"
+description: "PonzuSwap's fee structure: 20% anti-sniper decay at launch, 1% permanent fee, and how every fee cent flows through the Distributor."
+---
+
+## Swap Fee Structure
+
+PonzuSwap is a Uniswap V2 fork with two modifications: dynamic launch fees and integrated Distributor routing.
+
+### Normal Trading (After First Hour)
+
+**1% fee on output tokens.** Charged symmetrically:
+- Buying (ETH to token): 1% fee deducted from token output
+- Selling (token to ETH): 1% fee deducted from ETH output
+
+All fees route to the Distributor, which splits them between stakeholders based on the current allocation formula.
+
+**Note on total trading cost:** The 1% fee is separate from price impact (slippage). On a $10,000 trade, the fee is $100. Price impact depends on pool depth and trade size. For trades above ~2% of pool reserves, price impact can exceed the fee. Check the expected output on PonzuSwap before confirming.
+
+### Launch Window (First Hour)
+
+**20% fee** decaying linearly to **1%** over 60 minutes.
+
+| Time After Launch | Fee Rate |
+|-------------------|----------|
+| 0 min | 20.0% |
+| 10 min | 16.8% |
+| 20 min | 13.7% |
+| 30 min | 10.5% |
+| 40 min | 7.3% |
+| 50 min | 4.2% |
+| 60 min | 1.0% |
+
+**The exact formula:**
+```
+if (timeSinceLaunch < 3600 seconds):
+    fee = 2000 - (timeSinceLaunch x (2000 - 100) / 3600)
+else:
+    fee = 100
+```
+
+Fee is in basis points (2000 = 20%, 100 = 1%). At any moment during the first hour, the fee is a linear interpolation between 20% and 1%.
+
+**Launch fees go to the same Distributor** as normal swap fees. This means the first hour of trading, when fees are highest, generates the largest single batch of rewards for presale holders and farm stakers.
+
+---
+
+## How Anti-Sniper Protection Works
+
+When a presale fills and liquidity goes live, bots and snipers buy tokens the moment they become tradeable, expecting to dump on retail shortly after.
+
+The elevated fee window makes this strategy costly. But it doesn't make it impossible. Here's the honest math:
+
+**Round-trip cost at launch (buy + sell at time 0):**
+- Buy: 20% fee on token output (you receive 80% of expected tokens)
+- Sell immediately: 20% fee on ETH output (you receive 80% of expected ETH)
+- Combined: you keep ~64% of your capital. You need a ~56% price increase just to break even.
+
+**Round-trip at 30 minutes (10.5% fee):**
+- Combined retention: ~80%. Break-even requires ~25% price increase.
+
+**Round-trip at 50 minutes (4.2% fee):**
+- Combined retention: ~92%. Break-even requires ~9% price increase.
+
+The protection is strongest in the first 30 minutes and tapers off. By the 50-minute mark, the fee is close enough to normal that a fast-moving market could still reward early buyers. The design doesn't promise zero sniping. It makes the first-hour window expensive enough that casual bots and automated snipers can't profit from small price movements.
+
+---
+
+## Where Swap Fees Go
+
+All swap fees (ETH and tokens) flow to the Distributor. The Distributor routes them based on the dynamic allocation formula, which shifts as presale holders claim their tokens:
+
+**ETH from swap fees:**
+| Recipient | At Launch | After 50% Claimed | After 100% Claimed |
+|-----------|-----------|-------------------|---------------------|
+| Ponzu protocol | 40% | 40% | 40% |
+| Presale holders | 20% | 10% | 0% |
+| Farm stakers | 20% | 30% | 40% |
+| Project treasury | 15% | 15% | 15% |
+| Kioke holders | 5% | 5% | 5% |
+
+**Worked example (first-hour fees):**
+
+Assume $100,000 in buy volume during the first hour, with an average fee of ~10.5%:
+- Total fees collected: ~$10,500
+- Ponzu protocol: $4,200
+- Presale holders: $2,100 (if 0% claimed) or $1,050 (if 50% claimed)
+- Farm stakers: $2,100 (if 0% claimed) or $3,150 (if 50% claimed)
+- Project treasury: $1,575
+- Kioke holders: $525
+
+These are the largest fee payouts any project will generate. First-hour volume is typically the highest, and the fee rate is 10-20x normal.
+
+---
+
+## Presale Purchase Fee (4%)
+
+Separate from swap fees. Every presale purchase has a 4% fee on ETH input, distributed immediately at time of purchase:
+
+| Recipient | Share |
+|-----------|-------|
+| Creator (project deployer) | 1% |
+| Ponzu protocol | 1% |
+| Kioke holders | 1% |
+| Order referrer | 1% |
+
+This fee is deducted from your ETH before it enters the presale pool. On a 1 ETH purchase, 0.04 ETH goes to fees and 0.96 ETH goes toward your token allocation.
+
+**Interaction with refunds:** If you refund, you get 90% of the ETH that's in the presale pool for your position. The 4% fee was already distributed at purchase time and is not recoverable. So on a 1 ETH purchase followed by a refund: you paid 0.04 ETH in fees, 0.96 ETH entered the pool, and 90% of your proportional share (~0.864 ETH) comes back. Total cost of the round trip: ~0.136 ETH (13.6%).
+
+---
+
+## Refund Penalty
+
+Before launch, buyers can refund with a 10% token penalty:
+- 10% of your token allocation stays in the presale pool
+- The remaining tokens are removed from your allocation
+- 90% of your proportional ETH is returned
+- The penalty tokens are redistributed pro-rata to all remaining presale holders
+
+This is a token penalty, not an ETH penalty. You lose 10% of your tokens, and the ETH returned is proportional to your remaining allocation (90% of your share).
+
+---
+
+## Farm Early Exit Penalty
+
+Unstaking LP from the farm before 7 days incurs a linear penalty. Full details on the [Non-Inflationary Farming](/docs/non-inflationary-farming) page.
+
+Summary: 100% penalty at day 0, linearly decreasing to 0% at day 7. Penalized LP splits 50/50 between remaining farm stakers and protocol-owned liquidity.
+
+---
+
+## Complete Fee Summary
+
+| Fee | Amount | When | Destination | Refundable? |
+|-----|--------|------|-------------|-------------|
+| Presale purchase | 4% of ETH | Each presale buy | Creator, protocol, Kioke, referrer (1% each) | No |
+| Swap (launch window) | 20% decaying to 1% | First hour after launch | Distributor | N/A |
+| Swap (normal) | 1% of output | Every trade after first hour | Distributor | N/A |
+| Refund penalty | 10% of tokens | Before launch, on refund | Remaining presale holders | N/A |
+| Farm early exit | Up to 100% of LP | First 7 days of farm stake | 50% stakers, 50% protocol | N/A |
+
+Every fee is deterministic, on-chain, and calculable before you commit. No hidden costs. No variable admin fees. No fee changes post-deployment.
+
+---
+
+## On-Chain Verification
+
+You can verify the current fee state for any PonzuSwap pair:
+
+| What to Check | How |
+|---------------|-----|
+| Current swap fee rate | Read `launchTime` from the pair contract, calculate elapsed time, apply the formula above |
+| Fee recipient | The Distributor address is set at pair creation and visible in the pair contract |
+| Fee on a specific trade | Use the router's `getAmountsOut()` function. The returned amount already accounts for the current fee. |
+| Launch timestamp | Call `launchTime()` on the pair contract |
+
+The fee formula is hardcoded in the pair contract bytecode. No admin can change the 1% normal fee, the 20% launch fee, or the 60-minute decay window.

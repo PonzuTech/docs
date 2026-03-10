@@ -1,0 +1,163 @@
+---
+title: "Details for Founders"
+description: "Everything a project founder needs to know: deployment, revenue, presale management, and post-launch operations."
+---
+
+## What You Deploy
+
+One transaction through PonzuRecipe creates your complete token ecosystem. Eight contracts, all immutable, all interconnected:
+
+| Contract | What It Does |
+|----------|-------------|
+| **Token** | Your ERC-20. 1,000,000 fixed supply. No mint function exists |
+| **Presale** | Sells 690,000 tokens (69%) at linear pricing |
+| **Launcher** | Creates PonzuSwap liquidity when presale fills |
+| **Distributor** | Routes swap fees and forfeited tokens to stakeholders |
+| **Farm** | LP staking rewards for your community |
+| **Ponzu Bottle** | ERC-721 NFT representing presale positions |
+| **Liquidity Card** | ERC-721 NFT representing farm positions |
+| **Project** | Registry and coordinator contract |
+
+**Cost:** 0.005 ETH creation fee (paid to the protocol) + optional dev buy amount (your own presale purchase).
+
+**Verification:** All eight contracts deploy from the PonzuRecipe factory contract. No proxy patterns. No upgrade functions. No admin keys. Read the source on Etherscan. Search for `selfdestruct`, `delegatecall`, `upgradeTo`. None exist.
+
+---
+
+## Configuration Choices
+
+At deployment, you set these parameters. They are fixed permanently after:
+
+| Parameter | Options | Notes |
+|-----------|---------|-------|
+| Token Name | Any string | Your token's display name |
+| Token Symbol | Any string | Your ticker (e.g., MYTKN) |
+| Vesting Duration | 10 days (Yellow Bottle) or 10 weeks (Green Bottle) | See [diamond-hand vesting](/raise/diamond-hand-vesting) for tradeoffs |
+| Target Raise | Sets the linear price curve | Minimum 3 ETH on mainnet. This determines your end price: `endPrice = targetRaise / 690,000` |
+| Metadata | IPFS, Arweave, or HTTPS URI | Image, description, and social links |
+| Dev Buy | Optional ETH amount | Your own initial presale purchase. Creates a Ponzu Bottle for you, subject to the same vesting as everyone else |
+
+---
+
+## Your Revenue: Complete Breakdown
+
+Here's every ETH you earn, when you earn it, and where it comes from. Worked example uses a **50 ETH target raise**.
+
+### During Presale
+- **1% creator fee** on every ETH purchase
+- Arrives in your wallet immediately with each buy
+- On a 50 ETH raise: ~0.52 ETH total (1% of the ~52 ETH gross before the 4% fee split)
+
+### At Launch
+- **9% of the presale pool** goes directly to your wallet
+- The presale pool is 96% of all ETH contributed (after the 4% fee was distributed during purchases)
+- On a 50 ETH pool: **4.5 ETH** immediate runway
+
+### Post-Launch (Ongoing)
+- **15% of Distributor token allocation** from forfeited vesting tokens
+- **15% of Distributor ETH allocation** from the 1% swap fee on every PonzuSwap trade
+- These arrive continuously as trades happen and holders claim early
+
+### Total from a 50 ETH Raise
+
+| Source | Amount | When |
+|--------|--------|------|
+| Creator fee (1%) | ~0.52 ETH | During presale, per purchase |
+| Treasury (9%) | 4.5 ETH | At launch, one transaction |
+| Distributor (15% of tokens) | Variable, ongoing | Post-launch, from early claimers |
+| Distributor (15% of ETH fees) | Variable, ongoing | Post-launch, from swap volume |
+| **Guaranteed minimum** | **~5.02 ETH** | Before any trading occurs |
+
+The ongoing Distributor revenue depends on trading volume and how many holders claim early. A project with active trading generates continuous ETH fees. A project where 60% of holders claim on Day 1 sends 15% of their forfeited tokens to your treasury.
+
+---
+
+## The Founder Workflow
+
+<Steps>
+  <Step title="Deploy">
+    Configure your token and deploy through ponzu.app or the SDK. One transaction. All eight contracts are live and immutable.
+  </Step>
+  <Step title="Build in Public">
+    The presale runs in the background. Ship features. Share updates. Your 1% creator fee arrives with every purchase. No Zoom calls. No pitch decks. No term sheet negotiations.
+  </Step>
+  <Step title="Watch Conviction Build">
+    Linear pricing means early believers get better prices. As the presale fills, each purchase signals growing conviction at a higher price point. Your community forms around people who chose to buy, not people who received free allocations.
+  </Step>
+  <Step title="Launch Happens Automatically">
+    When 690,000 tokens sell, anyone calls `triggerLaunch()`. PonzuSwap liquidity is created permanently. Your 9% ETH arrives in one transaction. Diamond-hand vesting begins.
+  </Step>
+  <Step title="Earn While Building">
+    Post-launch, you receive ongoing revenue from the Distributor: 15% of swap fees and 15% of forfeited vesting tokens. Your community farms LP rewards. You build product. The contracts handle the rest.
+  </Step>
+</Steps>
+
+---
+
+## What the Contracts Handle vs. What You Do
+
+| Task | You | Contracts |
+|------|-----|-----------|
+| Set token parameters | Once, at deployment | Enforced permanently |
+| Run the presale | Share it with your community | Accepts purchases, mints Ponzu Bottles, tracks allocations |
+| Process refunds | Nothing | Handles 90% refund, 10% penalty redistribution |
+| Create liquidity | Nothing | Pairs tokens + ETH on PonzuSwap automatically |
+| Lock LP | Nothing | LP tokens sit in a contract with no withdrawal function |
+| Vest tokens | Nothing | Linear vesting, one-time claim, forfeit redistribution |
+| Distribute fees | Nothing | Routes 1% swap fees to all stakeholders dynamically |
+| Manage farming | Nothing | LP staking, reward distribution, penalty enforcement |
+| Receive treasury | Claim it | 9% ETH sent to your wallet at launch |
+
+After deployment, every operational step is handled by immutable contracts. Your job is to build the product that makes the token worth holding.
+
+---
+
+## What If the Presale Stalls?
+
+There is no time limit on the presale. If your project sits at 30% filled for months, here's what's true:
+
+- **You keep all creator fees earned so far.** The 1% from every purchase is already in your wallet.
+- **Buyers can refund.** They get 90% of their ETH back. The 10% token penalty stays in the pool and benefits remaining holders.
+- **You cannot cancel the presale.** The contracts are immutable. The presale will remain open until it fills.
+- **You can keep building.** Ship features. Share updates. A slow presale that eventually fills because the product proved itself is better than a fast sellout with nothing behind it.
+
+A presale that fills over 6 months at increasingly higher prices, because the founder shipped real product along the way, creates a healthier community than one that fills in 6 minutes on hype alone.
+
+---
+
+## Technical: Using the SDK
+
+Deploy through the web app at ponzu.app, or programmatically with the SDK:
+
+```typescript
+import { deploy } from '@ponzu_app/sdk'
+import { parseEther } from 'viem'
+
+const result = await deploy(
+  {
+    owner:          account.address,    // Your wallet, receives treasury + creator fees
+    tokenName:      'My Token',
+    tokenSymbol:    'MYTKN',
+    metadata:       'ipfs://Qm...',     // Project description + socials
+    imageURI:       'ipfs://Qm...',     // Token image
+    targetEthRaise: parseEther('5'),    // Minimum 3 ETH on mainnet
+  },
+  wallet,       // viem WalletClient
+  client,       // viem PublicClient
+  'mainnet',    // 'mainnet' or 'sepolia'
+)
+
+// All eight contract addresses are returned:
+// result.addresses.token
+// result.addresses.presale
+// result.addresses.launcher
+// result.addresses.distributor
+// result.addresses.farm
+// result.addresses.ponzuBottle
+// result.addresses.liquidityCard
+// result.addresses.project
+```
+
+The `deploy()` function sends a single transaction to PonzuRecipe. All contracts are created atomically. If any part fails, the entire deployment reverts.
+
+Full SDK reference: [SDK on NPM](https://www.npmjs.com/package/@ponzu_app/sdk)

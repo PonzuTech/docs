@@ -1,0 +1,106 @@
+---
+title: "Core Principles"
+description: "The design philosophy behind every Ponzu mechanism: why patience pays, why extraction fails, and why time is the only signal that can't be faked."
+---
+
+## Conviction Over Extraction
+
+Every design decision in Ponzu starts from one observation: token launches have devolved into casinos. An equilibrium designed around extraction rather than alignment.
+
+The industry launches roughly a million tokens per month. Serial deployers drain 80% of all liquidity within 24 hours. A small cartel of 12 wallet clusters engineers nearly 20% of token creations while extracting millions. The business model is velocity: deploy, pump, drain, repeat.
+
+Ponzu doesn't promise aligned launches. The contracts make them the only option. The code won't allow rugs, snipers, or VC dumps. You can verify this by reading the deployed contracts on Etherscan. No `withdraw` on LP tokens. No `mint` on the token. No `owner` keys after initialization.
+
+---
+
+## Three Pillars
+
+### 1. Anti-Extraction
+
+Making rug pulls economically irrational rather than just discouraged.
+
+Add a 10-day vesting period and the scam economics collapse. A scammer who can only run 3 scams per month instead of 500 per month isn't running a business anymore. The velocity that makes extraction profitable becomes impossible.
+
+Capital that's locked can't be recycled. The same $10,000 can't pump and dump 500 different tokens in a month if it's stuck in a vesting contract.
+
+**What to verify:** The vesting duration is set at deployment (`vestingDuration` in the Presale contract) and has no setter function. Once deployed, nobody changes it.
+
+### 2. Alignment Through Incentives
+
+Diamond-hand vesting rewards patience. Not because patience is virtuous. Because it's one of the few signals left that can't be counterfeited.
+
+You can fake followers. Anyone with $500 can buy 50,000 accounts. You can fake volume. You can fake a chart. You can manufacture attention.
+
+But you can't fake waiting. Either you held for 10 days or you didn't. Time is the one variable in hyper-financialized markets that remains incorruptible.
+
+**The math behind it:** Claim on Day 1, keep 10%, forfeit 90%. Claim on Day 10, keep 100% plus a pro-rata share of everything forfeited by everyone who claimed before you. The patient holders' allocation grows as impatient holders exit. This isn't a promise. It's the `claim()` function.
+
+### 3. Permissionless Exit
+
+Exit any time, leave the rest. Ponzu doesn't trap capital. Every participant can leave: refund from the presale (90% ETH back), claim early from vesting (keep vested portion), unstake from the farm (penalty decreases daily). The cost of leaving decreases with patience. No one is locked in. Everyone made their choice.
+
+**Why this matters for research:** When evaluating a Ponzu project, check how many holders have refunded vs. stayed. High refund rates tell you something about sentiment. Low refund rates tell you something about conviction. Both signals are on-chain and ungameable.
+
+---
+
+## The Design Philosophy
+
+### Time Beats Capital
+
+We've been building tokens ignoring the fact that players (and their chips) don't all stay at the table for the same time. Founders play the infinite game. Investors play the fund cycle. Early adopters play the alpha game.
+
+All three games are rational. None of these players are wrong. But we've been too focused on allocation, not distribution. Diamond-hand vesting is how initial allocation and token distribution become different over time.
+
+### The Scam Business Model Runs on Speed
+
+If one bot can extract $800 from each pump and launch 500 a month, that's $400,000/month in pure extraction. Time requirements make this business model collapse. When speed is removed, conviction over time becomes the competitive axis.
+
+### Fee-Based Sustainability
+
+Fixed 1,000,000 token supply. No mint function. All rewards come from real economic activity:
+
+- 1% trading fees on PonzuSwap
+- Forfeited tokens from early claimers
+- 10% token penalty from refunds
+- LP penalties from early farm exits
+
+Zero inflation. Zero dilution. Every reward token was earned by someone else's impatience, not printed from thin air.
+
+**Contrast with inflationary models:** Most yield farms print new tokens to pay rewards. The APY looks good until the supply doubles and the price halves. Ponzu's 1M supply is fixed. Check `totalSupply()` on any Ponzu token at any point in its lifecycle. The number never changes.
+
+---
+
+## On-Chain Signals for Research
+
+If you're evaluating a Ponzu project, these are the on-chain data points that matter:
+
+| Signal | What it tells you | How to check |
+|--------|-------------------|--------------|
+| Presale fill rate | Market demand. Fast fill = high conviction. Slow fill = either early or low interest. | `tokensAvailable()` on the Presale contract over time |
+| Refund count | How many people changed their mind. High refunds after initial buying = weak sentiment. | `Refunded` events on the Presale contract |
+| Early claim rate | How many people exited early during vesting. More early claims = more bonus tokens for you if you waited. | `Claimed` events on the Presale contract before vesting ends |
+| LP depth | Liquidity floor. 91% of all raised ETH goes here permanently. | Check the PonzuSwap pair reserves |
+| Distributor balance | Pending rewards from fees and forfeitures. | `pendingRewards()` on the Distributor |
+
+These signals exist whether or not the project team tells you about them. That's the point.
+
+---
+
+## Further Reading
+
+These articles explore the thinking behind Ponzu's mechanisms in depth:
+
+<CardGroup cols={2}>
+  <Card title="Long Conviction" icon="clock" href="https://paragraph.xyz/@0xYuzu/long-conviction">
+    The case for time as the only incorruptible signal in financialized markets.
+  </Card>
+  <Card title="Three Games, One Table" icon="dice" href="https://paragraph.xyz/@0xYuzu/three-games-one-table">
+    Why founders, investors, and early adopters need different distribution mechanisms.
+  </Card>
+  <Card title="Leap of Faith" icon="mountain" href="https://paragraph.xyz/@0xYuzu/leap-of-faith">
+    A letter to founders building through the bear market.
+  </Card>
+  <Card title="Markets Need Time" icon="hourglass" href="https://paragraph.xyz/@0xYuzu/speed-run-to-zero">
+    Why AI agents and speed-optimized markets need their own IEX speed bump.
+  </Card>
+</CardGroup>

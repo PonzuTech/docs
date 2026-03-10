@@ -1,0 +1,136 @@
+---
+title: "Koji Credits"
+description: "Non-transferable endorsement credits. Burn Koji on projects you believe in. Earn from their success. Every endorsement is an irreversible allocation decision."
+---
+
+## What is Koji?
+
+Koji is a non-transferable credit that lets Kioke Card holders pick which projects receive their backing. Each endorsement is an irreversible burn. Your Koji allocation across projects becomes your on-chain track record of conviction.
+
+---
+
+## How Koji Accumulates
+
+Every time a new token launches through the Ponzu factory, **1 Koji credit is distributed to each of the 300 barrels**.
+
+- Hold your barrel for 10 launches: 10 Koji
+- Hold for 100 launches: 100 Koji
+- Hold for 500 launches: 500 Koji
+
+Koji is tied to the barrel, not the wallet. Transfer the Kioke Card NFT, the Koji moves with it.
+
+Koji is **non-transferable** between barrels. You cannot buy Koji. You cannot trade it. You can only accumulate it by holding a barrel through launches, and burn it on projects you endorse.
+
+This creates a time-weighted advantage. Barrels held longer have more Koji to allocate. A barrel acquired after 200 launches has 200 Koji. A new buyer on the secondary market gets whatever the previous holder accumulated but didn't burn.
+
+---
+
+## Endorsement: How Koji Becomes Revenue
+
+**Burn Koji on a project to earn a share of that project's 5% Kioke allocation from the Distributor.**
+
+When you endorse a project:
+1. Choose how many Koji to burn
+2. The burn is irreversible
+3. You begin earning from that project's Distributor rewards
+4. Your share = your Koji burned / total Koji burned on that project across all barrels
+
+You can add more Koji to an existing endorsement at any time.
+
+### What You Earn
+
+Fermenting rewards are paid in **project tokens and ETH**, not Koji. The Distributor for each project collects from three sources:
+
+- Forfeited tokens from early claimers during diamond-hand vesting
+- 1% swap fees from all PonzuSwap trades on that pair
+- 10% token penalty from pre-launch refunds
+
+5% of everything the Distributor receives goes to the Kioke pool for that project, split among endorsing barrels.
+
+If you endorse 15 projects, you receive revenue streams in 15 different project tokens plus ETH from swap fees. Each stream is independent. Each scales with that project's trading volume and claim activity.
+
+---
+
+## Worked Example
+
+Project X launches on Ponzu. 40 barrels endorse it. You burned 10 Koji. Another barrel burned 20. The remaining 38 barrels burned a combined 70. Total: 100 Koji burned on Project X.
+
+Your share: 10/100 = 10% of the Kioke allocation for Project X.
+
+**Month 1 numbers:**
+- Project X monthly trading volume: 2,000 ETH
+- Swap fees collected: 20 ETH (1%)
+- Early claim forfeitures add project tokens to the Distributor
+- Kioke 5% of ETH Distributor share: 5% of the Kioke-eligible portion
+- Your 10% of that: calculable on-chain, paid in ETH + project tokens
+
+The math scales proportionally. Higher trading volume = more swap fees = more Distributor inflow = more Kioke earnings.
+
+Back a project that sustains volume, your endorsement keeps paying. Back a project that dies, your Koji is burned with nothing to show for it. The mechanism rewards judgment, not just participation.
+
+---
+
+## The Koji Allocation Game
+
+Each Koji burn is a capital allocation decision with real opportunity cost. Once burned, that Koji is gone. It cannot be redirected.
+
+### Strategic Considerations
+
+**Early endorsement advantage.** If you're among the first to endorse a project and it succeeds, your share of the 5% is large. As more barrels pile on, your percentage dilutes. Being early on winners is directly rewarded.
+
+**Concentration vs. diversification.** Same tradeoff as portfolio construction.
+
+| Strategy | Koji Use | Risk Profile | Expected Outcome |
+|----------|----------|-------------|-----------------|
+| Concentrate on 2-3 projects | 30-50 Koji each | High variance | Large share of winners (or zero from losers) |
+| Spread across 15-20 projects | 3-5 Koji each | Lower variance | Small share of many, buffered against individual failures |
+| Hold and wait | 0 Koji burned | No fermenting revenue | Accumulate a larger Koji balance for future deployment |
+
+**Hoarding penalty.** Koji sitting in your barrel earns zero fermenting revenue. There's an implicit cost to waiting: you miss the early-endorser advantage on projects launching now. But you preserve optionality for higher-conviction bets later.
+
+**Information value.** Koji endorsements are public and on-chain. Founders can see which barrels endorsed their project. Communities can see which barrels have the best track record. This creates a reputation layer where your endorsement history has social and deal-flow value beyond the direct financial return.
+
+---
+
+## Diamond-Hand Claim on Koji Rewards
+
+Fermenting rewards follow the same vesting pattern as presale claims:
+
+- **10-day linear vesting** on accumulated rewards
+- Claim early: forfeit unvested portion to remaining endorsers of that project
+- One-time claim per endorsement stake
+
+| Day | Claimable | Forfeited |
+|-----|-----------|-----------|
+| 1 | 10% | 90% |
+| 3 | 30% | 70% |
+| 5 | 50% | 50% |
+| 7 | 70% | 30% |
+| 10 | 100% | 0% |
+
+If another endorser claims on Day 2, they forfeit 80% of their accumulated rewards. That 80% is redistributed to remaining endorsers, including you, if you wait.
+
+Patient endorsers earn their own rewards plus a share of forfeited rewards from impatient endorsers. The mechanism filters for conviction at every layer of the protocol.
+
+---
+
+## Technical Detail
+
+The Distributor transfers 5% of project tokens and 5% of ETH to the KiokeClaim contract. The contract detects new token balances via balance diff on any state change. No special callback or interface required from project contracts.
+
+Rewards accumulate per-project. Each endorsement is tracked independently. You can have different claim timing across different projects.
+
+---
+
+## Koji vs. Crafting: Two Revenue Streams, Two Risk Profiles
+
+| | Crafting (Passive) | Fermenting (Active) |
+|--|-------------------|-------------------|
+| **Source** | 1% of presale ETH | 5% of Distributor rewards (tokens + ETH) |
+| **Distribution** | All 300 barrels equally | Only barrels that endorsed that project |
+| **Action required** | None. Hold the barrel. | Burn Koji on specific projects |
+| **Paid in** | ETH | Project tokens + ETH |
+| **Risk** | Platform volume risk only | Platform risk + project selection risk |
+| **Upside** | Linear with platform growth | Unbounded. Scales with endorsement quality |
+
+Crafting is the floor. Every barrel earns it. Fermenting is the ceiling. It depends on your judgment.

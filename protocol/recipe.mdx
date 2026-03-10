@@ -1,0 +1,261 @@
+---
+title: "Ponzu Factory"
+description: "Deploy a complete token ecosystem in a single transaction. Web UI, SDK, MCP server, or raw contract call. Pick your path."
+---
+
+## Overview
+
+PonzuRecipe is the factory contract. One function call (`craftPonzu`) deploys eight contracts atomically: Token, Presale, Launcher, Distributor, Farm, Ponzu Bottle, Liquidity Card, and Project.
+
+After deployment, the system is autonomous. No admin keys. No upgrade proxies. No migration steps.
+
+### Choose Your Deploy Path
+
+| Path | Best For |
+|------|----------|
+| [ponzu.app](https://ponzu.app) | Founders who want a web UI | 
+| [MCP Server](#mcp-server-ai-agent-integration) | AI-native using Claude, OpenClaw, etc. |
+| [SDK](#using-the-sdk) | Developers building  integrations | 
+| [Raw viem](#using-raw-viem-no-sdk) | Protocol engineers who want full control | 
+
+Most founders deploy through [ponzu.app](https://ponzu.app). If you're building with an AI coding assistant, the MCP server lets you deploy directly from conversation. The SDK and raw contract sections below are for developers who need programmatic access.
+
+---
+
+## Deploy via ponzu.app
+
+The fastest path. No code required.
+
+<Steps>
+  <Step title="Prepare your assets">
+    You need a token image (PNG or SVG) and a short description. The app handles IPFS upload for you.
+  </Step>
+  <Step title="Connect your wallet">
+    MetaMask, WalletConnect, or any EVM wallet. Switch to Sepolia testnet first if you want a dry run (minimum 0.1 sETH).
+  </Step>
+  <Step title="Configure your token">
+    Set your token name, symbol, vesting duration (10 days or 10 weeks), and target raise (minimum 3 ETH on mainnet). Add your socials.
+  </Step>
+  <Step title="Deploy">
+    One transaction. Cost: 0.005 ETH creation fee + optional dev buy (your own first purchase). Eight contracts deploy atomically. Your presale is live.
+  </Step>
+</Steps>
+
+After deployment, you'll see all eight contract addresses and a shareable presale link. The presale fills in the background while you build.
+
+---
+
+## MCP Server (AI Agent Integration)
+
+If you're building with Claude, Cursor, or any AI assistant that supports MCP, you can deploy and manage tokens directly from conversation.
+
+Add this to your MCP config (Claude Desktop: `claude_desktop_config.json`, Cursor: `.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "ponzu": {
+      "command": "npx",
+      "args": ["-y", "@ponzu_app/mcp"],
+      "env": {
+        "PONZU_PRIVATE_KEY": "0x...",
+        "PONZU_NETWORK": "mainnet"
+      }
+    }
+  }
+}
+```
+
+17 tools available: deploy tokens, buy presales, swap, farm, claim rewards, and more. All executable directly from conversation.
+
+**Configuration:**
+- Set `PONZU_NETWORK` to `sepolia` for testnet (start here)
+- Omit `PONZU_PRIVATE_KEY` for read-only access (browse presales, check prices, read contract state)
+- NPM: [@ponzu_app/mcp](https://www.npmjs.com/package/@ponzu_app/mcp)
+
+**Example prompt after setup:**
+> "Deploy a token called MyProject (MYPR) with a 5 ETH target raise, 10-day vesting, and this IPFS image: ipfs://Qm..."
+
+The MCP server handles the transaction construction, signing, and address parsing.
+
+---
+
+## Using the SDK
+
+For developers building custom deploy flows, bots, or integrations.
+
+```bash
+npm install @ponzu_app/sdk viem
+```
+
+```typescript
+import { deploy } from '@ponzu_app/sdk'
+import { parseEther, createWalletClient, createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+import { privateKeyToAccount } from 'viem/accounts'
+
+// For server-side scripts. For browser apps, use window.ethereum instead.
+const account = privateKeyToAccount('0xYOUR_PRIVATE_KEY')
+const wallet  = createWalletClient({ account, chain: mainnet, transport: http() })
+const client  = createPublicClient({ chain: mainnet, transport: http() })
+
+const result = await deploy(
+  {
+    owner:          account.address,
+    tokenName:      'My Token',
+    tokenSymbol:    'MYTKN',
+    metadata:       'ipfs://Qm...',   // JSON: { image, description, socials }
+    imageURI:       'ipfs://Qm...',   // token logo
+    targetEthRaise: parseEther('5'),  // min 3 ETH on mainnet, 0.1 ETH on Sepolia
+  },
+  wallet,
+  client,
+  'mainnet',
+)
+
+// All eight deployed contract addresses:
+const tokenAddress   = result.addresses.token
+const presaleAddress = result.addresses.presale
+const farmAddress    = result.addresses.farm
+// + project, operator, launcher, distributor, ponzuBottle, liquidityCard
+```
+
+The SDK handles pricing math, ABI encoding, transaction signing, and event decoding. You provide five parameters (owner, name, symbol, metadata, target raise). The SDK does the rest.
+
+---
+
+## Using Raw viem (No SDK)
+
+For protocol engineers who need direct contract access or custom pricing configurations. If you're using the SDK or web UI, skip this section.
+
+```typescript
+import { parseEther, parseAbi, keccak256, toBytes, encodeAbiParameters } from 'viem'
+
+const PONZU_RECIPE = '0x1155484c5fE614538d83c444f9a6dB662E6a7153'
+
+const RECIPE_ABI = parseAbi([
+  'function craftPonzu((address owner, address keyContract, uint256 initialBuyAmount, uint256 vestingDuration, bytes32 pricingStrategyTemplate, bytes pricingStrategyData, bytes feeStrategyData, string tokenName, string tokenSymbol, string metadata, string imageURI) params) payable',
+])
+```
+
+### Pricing Configuration
+
+Total token supply: 1,000,000. Of that, 690,000 (69%) are sold in the presale via linear pricing. 310,000 (31%) are seeded into DEX liquidity at launch.
+
+Linear pricing means the per-token price increases from `startPrice` to `endPrice` as the presale fills. If you want to raise 3 ETH total, the math below calculates the per-token price curve that achieves that target.
+
+```
+Formula (from LinearPricingStrategy):
+totalCost = (startPrice + endPrice) x 690,000 / 2
+
+Default: startPrice = endPrice / 10
+So: totalCost = endPrice x 11 x 690,000 / 20
+
+Solving for your target raise:
+endPrice = targetRaise x 20 / (11 x 690,000)
+```
+
+```typescript
+// Example: raise ~3 ETH on mainnet
+const targetRaise   = parseEther('3')
+const endPriceWei   = (targetRaise * 20n) / (11n * 690_000n)
+const startPriceWei = endPriceWei / 10n
+
+const pricingStrategyTemplate = keccak256(toBytes('LinearPricingStrategy'))
+const pricingStrategyData = encodeAbiParameters(
+  [{ type: 'uint256' }, { type: 'uint256' }],
+  [startPriceWei, endPriceWei],
+)
+```
+
+### Deploy Transaction
+
+```typescript
+const devBuyEth = parseEther('0.1')  // optional first purchase (0n to skip)
+
+const params = {
+  owner:                   account.address,
+  keyContract:             '0x0000000000000000000000000000000000000000',
+  initialBuyAmount:        devBuyEth,
+  vestingDuration:         864000n,               // 10 days in seconds
+  pricingStrategyTemplate,
+  pricingStrategyData,
+  feeStrategyData:         '0x',
+  tokenName:               'My Token',
+  tokenSymbol:             'MYTKN',
+  metadata:                'ipfs://Qm...',
+  imageURI:                'ipfs://Qm...',
+}
+
+// 0.005 ETH creation fee + your dev buy amount
+const value = parseEther('0.005') + devBuyEth
+
+const hash = await wallet.writeContract({
+  address: PONZU_RECIPE,
+  abi: RECIPE_ABI,
+  functionName: 'craftPonzu',
+  args: [params],
+  value,
+})
+```
+
+### Parse Deployed Addresses
+
+```typescript
+const ponzuCraftedTopic = keccak256(toBytes(
+  'PonzuCrafted(address,string,(address,address,address,address,address,address,address,address,address))'
+))
+
+const receipt = await publicClient.waitForTransactionReceipt({ hash })
+const log = receipt.logs.find(l => l.topics[0] === ponzuCraftedTopic)!
+
+const [, , addresses] = decodeAbiParameters(
+  [
+    { type: 'string' },
+    {
+      type: 'tuple',
+      components: [
+        { name: 'project',       type: 'address' },
+        { name: 'operator',      type: 'address' },
+        { name: 'token',         type: 'address' },
+        { name: 'presale',       type: 'address' },
+        { name: 'launcher',      type: 'address' },
+        { name: 'distributor',   type: 'address' },
+        { name: 'farm',          type: 'address' },
+        { name: 'ponzuBottle',   type: 'address' },
+        { name: 'liquidityCard', type: 'address' },
+      ],
+    },
+  ],
+  log.data,
+)
+```
+
+---
+
+## Metadata
+
+The contract accepts any URI string for `metadata` and `imageURI`. If you're deploying through ponzu.app, the app handles uploads automatically. For SDK or raw deploys, you need to host these yourself.
+
+**IPFS via Pinata (recommended):**
+```typescript
+const imageURI = 'ipfs://Qm...'   // uploaded via pinFileToIPFS
+const metadata = 'ipfs://Qm...'   // uploaded via pinJSONToIPFS
+
+// Metadata JSON schema:
+{
+  "image": "ipfs://Qm...",
+  "description": "A short description of your project",
+  "socials": {
+    "twitter": "https://x.com/yourproject",
+    "discord": "https://discord.gg/yourserver",
+    "website": "https://yourproject.com"
+  }
+}
+```
+
+**Arweave or HTTPS also supported:**
+```typescript
+const imageURI = 'https://arweave.net/YOUR_TX_ID'
+const metadata = 'https://your-server.com/token-metadata.json'
+```

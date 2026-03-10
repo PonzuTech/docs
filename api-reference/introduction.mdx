@@ -1,33 +1,236 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'SDK Reference'
+description: 'TypeScript SDK for deploying tokens, buying presales, swapping, and farming on Ponzu. Works with viem on Ethereum mainnet and Sepolia.'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Installation
 
-## Welcome
+```bash
+npm install @ponzu_app/sdk viem
+```
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+The SDK wraps all Ponzu contract interactions: typed functions, automatic pricing math, ABI encoding, and event decoding.
 
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="@ponzu_app/sdk on NPM"
+  icon="npm"
+  href="https://www.npmjs.com/package/@ponzu_app/sdk"
 >
-  View the OpenAPI specification file
+  Full package, changelog, and API docs.
 </Card>
 
-## Authentication
+---
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+## Setup
+
+```typescript
+import { createWalletClient, createPublicClient, http } from 'viem'
+import { mainnet } from 'viem/chains'
+import { privateKeyToAccount } from 'viem/accounts'
+
+const account = privateKeyToAccount('0xYOUR_PRIVATE_KEY')
+const wallet  = createWalletClient({ account, chain: mainnet, transport: http() })
+const client  = createPublicClient({ chain: mainnet, transport: http() })
+```
+
+Replace `mainnet` with `sepolia` and use a Sepolia RPC for testnet.
+
+---
+
+## Deploy a Token
+
+```typescript
+import { deploy } from '@ponzu_app/sdk'
+import { parseEther } from 'viem'
+
+const result = await deploy(
+  {
+    owner:          account.address,
+    tokenName:      'My Token',
+    tokenSymbol:    'MYTKN',
+    metadata:       'ipfs://Qm...',
+    imageURI:       'ipfs://Qm...',
+    targetEthRaise: parseEther('5'),
+  },
+  wallet,
+  client,
+  'mainnet',
+)
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `owner` | `Address` | Wallet address that receives creator fees and treasury |
+| `tokenName` | `string` | ERC-20 token name |
+| `tokenSymbol` | `string` | ERC-20 token symbol |
+| `metadata` | `string` | IPFS, Arweave, or HTTPS URL pointing to project metadata JSON |
+| `imageURI` | `string` | IPFS, Arweave, or HTTPS URL pointing to token image |
+| `targetEthRaise` | `bigint` | Target presale raise in wei. Minimum: 3 ETH mainnet, 0.1 ETH Sepolia |
+
+**Cost:** 0.005 ETH creation fee + optional dev buy amount.
+
+**Returns:** Object with `addresses` containing all 8 deployed contracts:
+
+```typescript
+result.addresses.token          // ERC-20 token
+result.addresses.presale        // Presale contract
+result.addresses.farm           // LP staking farm
+result.addresses.distributor    // Fee distribution
+result.addresses.launcher       // DEX pool creator
+result.addresses.ponzuBottle    // Presale position NFT
+result.addresses.liquidityCard  // Farm position NFT
+result.addresses.project        // Registry coordinator
+result.addresses.operator       // Access control
+```
+
+---
+
+## Buy Presale
+
+```typescript
+import { buy } from '@ponzu_app/sdk'
+import { parseEther } from 'viem'
+
+const tx = await buy(
+  {
+    presaleAddress: '0x...',
+    ethAmount:      parseEther('0.5'),
+    referrer:       '0x...',  // optional, earns 1% referral fee
+  },
+  wallet,
+  client,
+  'mainnet',
+)
+```
+
+Returns a Ponzu Bottle NFT representing the presale position.
+
+---
+
+## Refund
+
+```typescript
+import { refund } from '@ponzu_app/sdk'
+
+const tx = await refund(
+  {
+    presaleAddress: '0x...',
+    bottleId:       1n,
+  },
+  wallet,
+  client,
+  'mainnet',
+)
+```
+
+Returns 90% of ETH. The 10% token penalty stays in the pool and redistributes pro-rata to remaining holders. Only available before launch.
+
+---
+
+## Claim Tokens
+
+```typescript
+import { claim } from '@ponzu_app/sdk'
+
+const tx = await claim(
+  {
+    presaleAddress: '0x...',
+    bottleId:       1n,
+  },
+  wallet,
+  client,
+  'mainnet',
+)
+```
+
+One claim per Ponzu Bottle. Tokens vest linearly over 10 days (or 10 weeks). Claiming early forfeits unvested tokens to the Distributor.
+
+---
+
+## Swap
+
+```typescript
+import { swap } from '@ponzu_app/sdk'
+import { parseEther } from 'viem'
+
+const tx = await swap(
+  {
+    tokenAddress: '0x...',
+    amountIn:     parseEther('0.1'),
+    direction:    'ethToToken',  // or 'tokenToEth'
+  },
+  wallet,
+  client,
+  'mainnet',
+)
+```
+
+1% swap fee (20% during first hour after launch, decaying linearly to 1%).
+
+---
+
+## Network Configuration
+
+```typescript
+import { getAddresses } from '@ponzu_app/sdk'
+
+// Mainnet
+const addresses = getAddresses('mainnet')
+
+// Sepolia testnet
+const addresses = getAddresses('sepolia')
+
+// addresses.ponzuRecipe, .ponzuSwap, .ponzuRouter, .zapEth, .weth, etc.
+```
+
+---
+
+## MCP Server (AI Agent Integration)
+
+For AI agents (Claude Desktop, Cursor, Claude Code), use the MCP server instead of the SDK directly:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
+{
+  "mcpServers": {
+    "ponzu": {
+      "command": "npx",
+      "args": ["-y", "@ponzu_app/mcp"],
+      "env": {
+        "PONZU_PRIVATE_KEY": "0x...",
+        "PONZU_NETWORK": "mainnet"
+      }
+    }
   }
-]
+}
 ```
+
+**17 tools available:**
+
+| Category | Tools |
+|----------|-------|
+| Deploy | `deploy_token` |
+| Presale | `buy_presale`, `refund_presale`, `claim_tokens`, `get_presale_info` |
+| Swap | `swap_eth_to_token`, `swap_token_to_eth`, `get_price` |
+| Farm | `stake_lp`, `unstake_lp`, `claim_farm_rewards` |
+| Read | `get_token_info`, `get_bottle_info`, `get_card_info`, `get_addresses` |
+| Utility | `get_balance`, `approve_token` |
+
+Set `PONZU_NETWORK` to `sepolia` for testnet.
+
+<Card
+  title="@ponzu_app/mcp on NPM"
+  icon="npm"
+  href="https://www.npmjs.com/package/@ponzu_app/mcp"
+>
+  Full MCP server package and configuration docs.
+</Card>
+
+---
+
+## Raw Contract Interaction
+
+If you prefer to interact with contracts directly without the SDK, see the [ABI Reference](/protocol/abi-reference) for all contract ABIs and usage examples with raw viem.
+
+Factory contract (PonzuRecipe): [`0x1155484c5fE614538d83c444f9a6dB662E6a7153`](https://etherscan.io/address/0x1155484c5fE614538d83c444f9a6dB662E6a7153)

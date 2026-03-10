@@ -1,68 +1,76 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Ponzu Documentation",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#E85D04",
+    "light": "#F48C06",
+    "dark": "#DC2F02"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "benefits/entrepreneurs",
+              "benefits/investors"
             ]
           },
           {
-            "group": "Customization",
+            "group": "The Basics",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "basics/what-is-ponzu",
+              "basics/core-principles",
+              "basics/how-it-works"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "How Projects Raise",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "raise/presale",
+              "raise/launch",
+              "raise/diamond-hand-vesting",
+              "raise/founder-details"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Token Distribution",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "rewards/distributor",
+              "rewards/non-inflationary-farming",
+              "rewards/dynamic-fees"
+            ]
+          },
+          {
+            "group": "Ponzu Kioke",
+            "pages": [
+              "kioke/overview",
+              "kioke/koji",
+              "kioke/genesis-sale"
+            ]
+          },
+          {
+            "group": "Protocol",
+            "pages": [
+              "protocol/recipe",
+              "protocol/abi-reference",
+              "protocol/contract-addresses"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "SDK",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "SDK Reference",
             "pages": [
               "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoint examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
             ]
           }
         ]
@@ -71,14 +79,19 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Ponzu App",
+          "href": "https://ponzu.app",
+          "icon": "flask-vial"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "SDK on NPM",
+          "href": "https://www.npmjs.com/package/@ponzu_app/sdk",
+          "icon": "npm"
+        },
+        {
+          "anchor": "SKILL.md",
+          "href": "https://ponzu.app/SKILL.md",
+          "icon": "shield-check"
         }
       ]
     }
@@ -90,33 +103,20 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Contact",
+        "href": "mailto:yuzu@ponzu.app"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Ponzu App",
+      "href": "https://ponzu.app"
     }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/0xYuzu",
+      "github": "https://github.com/nicola-ponzu"
     }
   }
 }

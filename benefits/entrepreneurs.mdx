@@ -1,0 +1,119 @@
+---
+title: "For Developers"
+description: "One transaction. Eight contracts. Presale fills while you ship features. No VCs. No pitch theater."
+---
+
+## The Problem With Raising Capital
+
+You have five options for launching a token today:
+
+1. **The VC path.** Raise a round. Give up board seats. Wait 2-3 years. Launch with insider overhang. Watch the unlock calendar drive your token price.
+2. **Never launch a token.** Reasonable. But you miss the most powerful community alignment tool in history.
+3. **Bonding curves (Pump, Believe, etc).** Median creator earnings: $10K-$100K. No intrinsic value. Sniper bots eat 50% of supply for 10% of the cost. Your token dies in 5 minutes.
+4. **Standard ICO.** Can work if you have trust and legal resources, but the history of rugs makes serious backers wary.
+5. **Launch on Ponzu.** The only option purpose-built for building a long-term project with community ownership.
+
+---
+
+## What Ponzu Gives Founders
+
+### One Transaction, Eight Contracts
+
+One `craftPonzu` call deploys your token, presale, DEX liquidity pool, LP lock, vesting, distribution, farming, and NFT positions. All atomically. All immutable. No multi-step process. No promises to break. No liquidity management.
+
+You can deploy through [ponzu.app](https://ponzu.app) (web UI, ~5 minutes), the [MCP server](/protocol/recipe#mcp-server-ai-agent-integration) (from Claude or Cursor, ~2 minutes), or the [@ponzu_app/sdk](https://www.npmjs.com/package/@ponzu_app/sdk) (programmatic access).
+
+### Ship While You Raise
+
+The presale runs in the background. Ship features. Share updates. Watch the presale fill. No Zoom calls. No pitch theater. No term sheet negotiations. The smart contracts handle the economics. Stay in flow state, building the thing that makes your project valuable.
+
+### Immediate Revenue
+
+Concrete numbers on a $100K presale:
+
+| Revenue Stream | Timing | On a $100K Raise |
+|---------------|--------|-------------------|
+| 1% creator fee on each presale purchase | During presale (claimable anytime) | $1,000 |
+| 9% of total raised ETH | At launch (immediate) | $9,000 |
+| 15% of Distributor allocation | Ongoing (tokens + ETH from swap fees) | Scales with trading volume |
+
+On a $500K presale, that's $5K in creator fees during the raise, $45K treasury at launch, plus ongoing Distributor income. Capital arrives in your wallet, not in tranches tied to milestones set by investors who have never built a product.
+
+### Refundable Presale = Higher Valuations
+
+Target a $1M valuation knowing buyers are taking a calculated bet, not a blind gamble. The 90% refund option means backers evaluate your team, not your rug probability. A project that starts at $100K and slowly sells out at $1M as it demonstrates product-market fit is healthier than one that sells out instantly into pure speculation.
+
+---
+
+## The Economics
+
+### Token Allocation
+| Allocation | Amount | Percentage |
+|------------|--------|------------|
+| Presale (community) | 690,000 | 69% |
+| DEX Liquidity | 310,000 | 31% |
+| Team / VCs / Treasury | 0 | 0% |
+
+Linear pricing means early believers get better prices. The pricing curve is transparent and on-chain. No hidden pre-sale rounds. No OTC deals. No insider discounts.
+
+### Your Revenue Timeline
+| Phase | Revenue |
+|-------|---------|
+| During presale | 1% creator fee on each purchase |
+| At launch | 9% of raised ETH (immediate treasury) |
+| Post-launch | 15% of Distributor token + ETH allocation (ongoing) |
+
+### What You Don't Control
+- Token supply (fixed at 1,000,000, no mint function)
+- Vesting schedule (set at creation, immutable)
+- Fee structure (4% presale fee, 1% swap fee, fixed)
+- Liquidity (permanent, no withdrawal function exists)
+
+"Will they actually lock liquidity?" is answered before the presale begins. The contracts are immutable. The parameters are fixed. The only remaining question is whether your project has value.
+
+---
+
+## For AI-Native Builders
+
+If you're building with Claude, Cursor, or any AI coding assistant, the [Ponzu MCP server](/protocol/recipe#mcp-server-ai-agent-integration) gives your AI agent direct access to deploy tokens, manage presales, and interact with every contract.
+
+Add this to your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "ponzu": {
+      "command": "npx",
+      "args": ["-y", "@ponzu_app/mcp"],
+      "env": {
+        "PONZU_PRIVATE_KEY": "0x...",
+        "PONZU_NETWORK": "sepolia"
+      }
+    }
+  }
+}
+```
+
+17 tools. Deploy, buy, swap, farm, claim. All from conversation. Start on Sepolia testnet, switch to mainnet when ready.
+
+---
+
+## Getting Started
+
+<Steps>
+  <Step title="Try on testnet first">
+    Go to [ponzu.app](https://ponzu.app) and switch to Sepolia. Deploy a test token (minimum 0.1 sETH raise). Walk through the full lifecycle: presale, buy, refund, launch, vesting, claim. Costs nothing real.
+  </Step>
+  <Step title="Prepare your assets">
+    You need a token image (PNG or SVG) and a short project description. If deploying through ponzu.app, the site handles IPFS upload. If using the SDK, upload to [Pinata](https://pinata.cloud) or any IPFS provider. [Metadata schema reference](/protocol/recipe#metadata).
+  </Step>
+  <Step title="Configure your token">
+    Choose name, symbol, vesting duration (10 days or 10 weeks), and target raise (minimum 3 ETH on mainnet). Add your Twitter, Discord, and website links.
+  </Step>
+  <Step title="Deploy">
+    One transaction. Cost: 0.005 ETH creation fee + optional dev buy (your own first purchase into the presale). Three paths: [ponzu.app](https://ponzu.app) (web), [MCP server](/protocol/recipe#mcp-server-ai-agent-integration) (AI assistant), or [@ponzu_app/sdk](https://www.npmjs.com/package/@ponzu_app/sdk) (code).
+  </Step>
+  <Step title="Build and share">
+    Your presale is live. Share the link. Build in public. Your community forms around your work, not your marketing budget.
+  </Step>
+</Steps>

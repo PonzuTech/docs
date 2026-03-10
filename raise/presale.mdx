@@ -1,0 +1,113 @@
+---
+title: "The Presale"
+description: "How projects raise capital through Ponzu's linear pricing presale with refundable positions and NFT-based ownership."
+---
+
+## Overview
+
+The presale is where a project's community buys in. 690,000 tokens (69% of total supply) are available at a linearly rising price. Every buyer receives a Ponzu Bottle NFT representing their position.
+
+No fixed price. No exponential bonding curve. No insider allocations.
+
+---
+
+## Linear Pricing
+
+Most token presales use one of two models: a fixed price where insiders get the same deal as latecomers, or a bonding curve where the first 10% of capital can buy nearly 50% of the supply. Both create problems. Fixed pricing rewards speed over conviction. Bonding curves reward bots over researchers.
+
+Ponzu uses linear pricing. The founder sets a target raise amount. The price starts at one-tenth of the final price and increases at a constant rate as tokens sell.
+
+```
+startPrice = endPrice / 10
+currentPrice = startPrice + (endPrice - startPrice) × (tokensSold / 690,000)
+```
+
+**Worked example:** A founder sets a target raise of 10 ETH.
+
+| Tokens Sold | Price per Token | Cumulative ETH Spent |
+|-------------|----------------|---------------------|
+| 0 (first buyer) | ~0.0000014 ETH | 0 ETH |
+| 172,500 (25%) | ~0.0000050 ETH | ~0.55 ETH |
+| 345,000 (50%) | ~0.0000086 ETH | ~2.20 ETH |
+| 517,500 (75%) | ~0.0000122 ETH | ~4.95 ETH |
+| 690,000 (100%) | ~0.0000158 ETH | ~10 ETH |
+
+The first buyer pays 10x less per token than the last buyer. Early conviction gets a better price. Late conviction pays for the validation that came before it.
+
+If the presale fills slowly, the founder builds in public while the price gradually rises. The market validates pricing through participation, not arbitrage.
+
+---
+
+## How Buying Works
+
+1. User calls `buy()` on the presale contract, sending ETH
+2. **4% fee** is deducted and distributed immediately:
+
+| Recipient | Share | Purpose |
+|-----------|-------|---------|
+| Creator | 1% | Project runway (sent to founder's wallet) |
+| Protocol | 1% | Platform operations |
+| Kioke | 1% | Distributed to Kioke Card holders |
+| Order Referrer | 1% | Referral reward (or to protocol if no referrer) |
+
+3. Remaining 96% is held in the presale contract until launch
+4. First purchase mints a **Ponzu Bottle NFT** (one per wallet per project)
+5. Subsequent purchases from the same wallet increase that Ponzu Bottle's allocation
+
+**For founders:** The 1% creator fee arrives in your wallet with every purchase. If your presale raises 50 ETH total, you receive 0.5 ETH during the presale period before launch even happens.
+
+---
+
+## The Refund
+
+Before launch, any buyer can call `refund()` to exit their position.
+
+| Component | What Happens |
+|-----------|-------------|
+| ETH returned | 90% of your proportional share of the presale pool |
+| Token penalty | 10% of your token allocation stays in the pool |
+| Purchase fee | The 4% from your original buy was already distributed and is not returned |
+
+**Worst-case math:** You send 1 ETH. 0.04 ETH (4%) is distributed as fees. 0.96 ETH enters the presale pool. You refund. You receive 90% of 0.96 = 0.864 ETH. Total cost of your round trip: 0.136 ETH (13.6%).
+
+The 10% token penalty redistributes pro-rata to all remaining holders. If Alice and Bob each bought 10,000 tokens and Bob refunds, his 1,000-token penalty stays in the pool. Alice's allocation grows from 10,000 to 11,000.
+
+**Partial refunds** are supported. Refund some of your tokens and keep the rest. A full refund burns the Ponzu Bottle NFT.
+
+**On-chain verification:** Call `getPosition(tokenId)` on the Ponzu Bottle contract to see any position's current allocation and ETH contributed.
+
+---
+
+## Ponzu Bottle NFT
+
+Your presale position is a transferable ERC-721 NFT.
+
+| Property | Detail |
+|----------|--------|
+| Minted on | First presale purchase (`buy()`) |
+| Limit | One per wallet per project |
+| Contains | Token allocation, ETH contributed, vesting status |
+| Transferable | Yes. Position moves with the NFT |
+| Burned on | Token claim or full refund |
+
+Selling your Ponzu Bottle on secondary markets transfers the entire position. The new owner can claim tokens, claim ETH rewards, or request a refund.
+
+**Example:** A project's presale has raised $400K. Your position entitles you to a $80K refund. You can take the refund, sell the Ponzu Bottle on a secondary NFT market, or hold through launch for diamond-hand vesting rewards. There is liquidity at every stage, but the system rewards patience over flipping.
+
+**For founders:** Transferable positions mean your supporters are never trapped. Someone who needs to exit can sell their Ponzu Bottle without needing you to intervene. You don't manage refunds. The contract handles everything.
+
+---
+
+## Presale Completion
+
+The presale completes when all 690,000 tokens are sold. There is no time limit. Projects can sell out in hours or months.
+
+Once sold out, anyone can call `triggerLaunch()`. No admin action required. The system is permissionless from this point forward.
+
+**For founders:** You control the pace indirectly. A higher target raise means a higher end price, which means a longer fill time. Set realistic targets. A presale that fills over weeks while you ship features is healthier than one that fills in minutes with no product behind it.
+
+**On-chain state:** Call `tokensSold()` and `currentPrice()` on the presale contract to verify progress independently. These are public view functions anyone can read.
+
+<Card title="What happens at launch" icon="rocket" href="/raise/launch">
+  When the presale sells out, the Launcher creates permanent DEX liquidity and vesting begins.
+</Card>

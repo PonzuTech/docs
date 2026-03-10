@@ -1,0 +1,204 @@
+---
+title: "How It Works"
+description: "The complete Ponzu token lifecycle: from factory deployment through presale, launch, vesting, and farming."
+---
+
+## The Lifecycle
+
+Every token launched through Ponzu follows the same path. No exceptions. No special deals. No admin overrides.
+
+```
+CRAFT → PRESALE → LAUNCH → VEST → FARM
+```
+
+---
+
+## Step 1: Craft
+
+A founder deploys their token through the PonzuRecipe factory. One transaction creates eight interconnected contracts: token, presale, launcher, distributor, farm, and three NFT contracts.
+
+**Cost:** 0.005 ETH creation fee + optional dev buy.
+
+**What gets set at creation:**
+- Token name and symbol
+- Pricing curve (start price to end price, linear)
+- Vesting duration (10 days or 10 weeks)
+- Metadata (image, description, socials)
+
+After this transaction, the founder has no admin keys. Every parameter is fixed.
+
+**How to verify:** The `PonzuCrafted` event on PonzuRecipe ([`0x1155484c5fE614538d83c444f9a6dB662E6a7153`](https://etherscan.io/address/0x1155484c5fE614538d83c444f9a6dB662E6a7153)) emits all eight contract addresses. Pull the event, read each contract on Etherscan, confirm there are no owner functions or upgrade proxies.
+
+---
+
+## Step 2: Presale
+
+The presale opens immediately. Users send ETH and receive tokens at a linearly rising price.
+
+**Token allocation:** 690,000 tokens (69% of supply) available in presale.
+
+**Price curve:** The founder sets an end price (target market cap). Start price is 10% of that. Price increases linearly with each token sold.
+
+```
+startPrice = endPrice / 10
+currentPrice = startPrice + (endPrice - startPrice) * (tokensSold / 690,000)
+```
+
+**Example with real numbers:** If a founder sets endPrice to 100 Gwei per token (targeting a ~100 ETH raise), the startPrice is 10 Gwei. First buyer pays ~10 Gwei/token. Last buyer pays ~100 Gwei/token. The average price across the entire presale is ~55 Gwei/token.
+
+**What happens on each purchase:**
+1. User sends ETH
+2. 4% fee deducted and split: 1% creator, 1% protocol, 1% Kioke, 1% referrer
+3. 96% held in contract until launch
+4. Ponzu Bottle NFT minted (one per user per project)
+5. Subsequent purchases increase the same NFT's allocation
+
+**Refund option:** Before launch, any buyer can refund for 90% of their ETH. The 10% token penalty stays in the pool and redistributes pro-rata to remaining holders.
+
+**Worst case math:** You buy 1 ETH into the presale. 0.04 ETH goes to fees immediately. You decide the project is bad and refund. You get back 90% of your remaining token value in ETH. Your total loss is the 4% fee + 10% token penalty. Not 100%.
+
+<Info>
+Your Ponzu Bottle NFT is transferable. Selling the NFT transfers your entire presale position, including the right to claim tokens or request a refund.
+</Info>
+
+---
+
+## Step 3: Launch
+
+When all 690,000 presale tokens are sold, launch becomes available. Anyone can trigger it (permissionless).
+
+**What happens:**
+1. 310,000 tokens + 91% of all raised ETH create a trading pair on PonzuSwap
+2. LP tokens are sent to the Presale contract and locked permanently (no function exists to withdraw them)
+3. 9% of ETH goes to the project treasury as immediate runway
+4. Vesting clock starts
+5. Trading opens on PonzuSwap
+
+**How to verify LP is locked:** After launch, check the PonzuSwap pair contract. The LP tokens sit in the Presale contract address. Read the Presale contract source. There is no `withdrawLP`, `removeLiquidity`, or `transferLP` function. The LP tokens are in the contract permanently because no code path exists to move them.
+
+**Anti-sniper protection:** PonzuSwap charges 20% on swaps during the first hour, decaying linearly to 1%. A sniper buying at launch and selling for a 10% gain actually loses 10% net. By minute 30, the fee is ~10.5%. By minute 60, it's 1%. Normal trading begins after the first hour.
+
+---
+
+## Step 4: Diamond-Hand Vesting
+
+After launch, presale holders have 10 days (or 10 weeks) to claim their tokens. They can claim at any time, but only once.
+
+| Claim Day | You Receive | Forfeited to Community |
+|-----------|-------------|----------------------|
+| Day 1 | 10% | 90% |
+| Day 3 | 30% | 70% |
+| Day 5 | 50% | 50% |
+| Day 10 | 100% + bonus | 0% |
+
+**The bonus:** Patient holders who wait the full vesting period receive their full allocation plus a pro-rata share of everything forfeited by early claimers.
+
+**Worked example:** 10 holders each own 10,000 tokens (100,000 total in presale). 5 holders claim on Day 1, each keeping 1,000 tokens and forfeiting 9,000 tokens. The 45,000 forfeited tokens go to the Distributor, which routes 40% (18,000) back to the 5 remaining presale holders. Each patient holder's allocation grows from 10,000 to 13,600 tokens. That's a 36% bonus for waiting.
+
+**One claim only.** You choose your moment. The Ponzu Bottle is burned after claiming. No partial exits. No "vest and leave" optimization.
+
+Forfeited tokens flow to the Distributor, which routes them to remaining presale holders and farm stakers.
+
+---
+
+## Step 5: Farm
+
+After launch, LP staking is available. Users provide liquidity on PonzuSwap and stake LP tokens to earn rewards.
+
+**Reward sources (non-inflationary):**
+- Forfeited tokens from early claimers
+- 1% swap fees from PonzuSwap trading
+- LP penalties from early farm exits
+
+**Each stake mints a Liquidity Card NFT.** Positions are transferable.
+
+**7-day minimum staking period:**
+- Unstake before 7 days = linear penalty (100% at day 0, 0% at day 7)
+- 50% of penalty goes to remaining stakers
+- 50% goes to protocol-owned liquidity
+
+**Claim types:**
+- ETH rewards: claimable anytime, repeatable
+- Token rewards: one-time claim per card (same diamond-hand principle)
+
+---
+
+## Fee Structure Summary
+
+All fees in one place:
+
+| Fee | Amount | When | Where it goes |
+|-----|--------|------|---------------|
+| Presale purchase | 4% of ETH | Every buy | 1% creator, 1% protocol, 1% Kioke, 1% referrer |
+| Refund penalty | 10% of tokens | Before launch | Pro-rata to remaining presale holders |
+| Swap fee (launch hour) | 20% decaying to 1% | First 60 minutes | Distributor |
+| Swap fee (normal) | 1% | Every trade after hour 1 | Distributor |
+| Farm early exit | Linear, 100% to 0% over 7 days | Unstaking before 7 days | 50% stakers, 50% protocol |
+
+---
+
+## The Distributor
+
+All fees and forfeited tokens flow through the Distributor. Here's how it splits:
+
+**Token distribution:**
+
+| Recipient | Share | Notes |
+|-----------|-------|-------|
+| Presale holders | 40% → 0% | Decreases as presale holders claim |
+| Farm stakers | 40% → 80% | Increases as presale empties |
+| Project treasury | 15% | Fixed |
+| Kioke holders | 5% | Fixed |
+
+**ETH distribution:**
+
+| Recipient | Share | Notes |
+|-----------|-------|-------|
+| Protocol | 40% | Fixed |
+| Presale holders | 20% → 0% | Decreases as presale holders claim |
+| Farm stakers | 20% → 40% | Increases as presale empties |
+| Project treasury | 15% | Fixed |
+| Kioke holders | 5% | Fixed |
+
+The shift from presale to farm happens automatically as presale holders claim their tokens. More early claims = more rewards flowing to the farm. This is why patient farm stakers benefit from impatient presale holders.
+
+---
+
+## The Complete Flow
+
+```
+Community buys Presale → Ponzu Bottle NFT minted
+                              ↓
+Presale sells out → Launcher creates PonzuSwap pair
+                  → LP tokens locked permanently
+                  → 9% ETH to project treasury
+                              ↓
+Vesting begins → Claim early (forfeit unvested → community)
+               → Claim late (get everything + bonus)
+                              ↓
+Trading on PonzuSwap → 1% swap fees → Distributor
+                              ↓
+Distributor splits → Tokens: 40% presale, 40% farm, 15% project, 5% Kioke
+                   → ETH: 20% presale, 20% farm, 15% project, 5% Kioke, 40% protocol
+                              ↓
+Farm stakers earn → Token rewards + WETH from fees
+                 → 7-day minimum, early exit penalty
+```
+
+Every position is an NFT. Ponzu Bottle for presale. Liquidity Card for farming. Kioke Card for launch rights. All transferable. All composable.
+
+---
+
+## Quick DD Checklist
+
+When evaluating a specific Ponzu project, check these:
+
+| Check | What to look for | Contract call |
+|-------|------------------|---------------|
+| Supply | Should be exactly 1,000,000 | `totalSupply()` on Token |
+| Presale progress | How much has sold, how close to launch | `tokensAvailable()` on Presale |
+| Price check | Current price vs. start/end to gauge entry timing | `currentPrice()` on Presale |
+| Vesting duration | 10 days vs. 10 weeks changes your hold timeline | `vestingDuration` on Presale |
+| Refund activity | How many people left. Signal for sentiment. | `Refunded` events on Presale |
+| LP status (post-launch) | Confirm LP tokens are in Presale contract, no withdrawal function | Check pair LP token `balanceOf(presaleAddress)` |
+| Mint function | Should not exist | Read Token source on Etherscan |

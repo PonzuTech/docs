@@ -1,97 +1,74 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Welcome to Ponzu"
+description: "Token factory on Ethereum. Eight contracts in one transaction. Diamond-hand vesting, non-inflationary farming, permanent liquidity. Exit early, but leave the rest."
 ---
 
-## Setting up
+## Exit early, but leave the rest.
 
-Get your documentation site up and running in minutes.
+We've watched token launches devolve into casinos. Insiders get cheap tokens, dump on the community, and disappear. Bots front-run every trade. What you need is time. Time to build traction. Conviction over time.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+Ponzu is a token launcher on Ethereum that adds time throughout the token lifecycle thanks to Diamond hand vesting. You can only claim once, if you claim early, you unvested tokens get redistributed to the patient.
 
-## Make it yours
+What this means is that there just isnt enough claimable tokens to dump at launch. 
 
-Design a docs site that looks great and empowers your users.
+For 10 day diamond hand vesting, there would only be 0.4% available to claim. Claim on day one, keep 10%, leave the rest. Wait ten days, get 100% plus a share of redistributed totkens. 
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+The weak hands subsidize the diamond hands.
+
+<CardGroup cols={3}>
+  <Card title="Launch a Project" icon="rocket" href="/benefits/entrepreneurs">
+    No VCs. No pitch decks. Ship features while the presale fills. The contracts handle the economics. Stay in flow state building the thing that makes your project valuable.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Back a Project" icon="chart-line" href="/benefits/investors">
+    90% refund before launch. Diamond-hand vesting rewards patience. Your position is a tradeable Ponzu Bottle NFT. Sell on secondary or wait it out.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Build on Ponzu" icon="code" href="/api-reference/introduction">
+    TypeScript SDK, MCP server for AI agents, raw contract ABIs. Deploy tokens programmatically or through Claude.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## How it works
 
-Everything you need to create world-class documentation.
+<Steps>
+  <Step title="Presale">
+    Linear pricing. Price starts at a tenth of your target market cap and rises with each buy. The market validates your pricing through participation, not arbitrage. Each position is a transferable Ponzu Bottle NFT. 690,000 tokens available. 90% ETH refund before launch.
+  </Step>
+  <Step title="Launch">
+    Presale fills, anyone triggers launch. 310,000 tokens + raised ETH become permanent liquidity on PonzuSwap. LP tokens sit in a contract with no withdrawal function. The dev is dead the moment that button is pressed.
+  </Step>
+  <Step title="Diamond-Hand Vesting">
+    One claim. That's it. Claim early, leave the rest for the patient. Wait the full vest, get your allocation plus a pro-rata bonus from everyone who left early. No one is locked in. Everyone makes their choice.
+  </Step>
+  <Step title="Farming">
+    Stake LP, earn trading fees and redistributed tokens. Fixed 1,000,000 supply. No mint function. Every reward came from real economic activity. Impatient capital subsidizes the patient. Same principle, extended.
+  </Step>
+</Steps>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+## The numbers
 
-## Need inspiration?
+| Parameter | Value |
+|-----------|-------|
+| Token supply | 1,000,000 fixed. No mint function. |
+| Presale allocation | 690,000 tokens (69%) |
+| Locked liquidity | 310,000 tokens (31%), permanent |
+| Team / VC / Treasury allocation | 0% |
+| Presale fee | 4% (1% creator, 1% protocol, 1% Kioke, 1% referrer) |
+| Swap fee | 1% (20% at launch, decays to 1% over first hour) |
+| Vesting | 10 days linear (10 weeks optional) |
+| Refund | 90% ETH back before launch |
+| Deploy cost | 0.005 ETH |
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<CardGroup cols={2}>
+  <Card title="How Projects Raise" icon="coins" href="/raise/presale">
+    Presale mechanics, linear pricing, launch triggers, and the full fundraising lifecycle.
+  </Card>
+  <Card title="How Rewards Work" icon="money-bill-transfer" href="/rewards/distributor">
+    The Distributor, non-inflationary farming, and dynamic fee routing between presale holders, farmers, and the project.
+  </Card>
+  <Card title="Kioke Card" icon="id-card" href="/kioke/overview">
+    300 barrels. Koji accumulates with every launch. Back projects with your credits. Your choices become your track record.
+  </Card>
+  <Card title="Understand the System" icon="book" href="/basics/what-is-ponzu">
+    Eight contracts deployed in one transaction. How they connect, what they enforce, and how to verify every claim on-chain.
+  </Card>
+</CardGroup>

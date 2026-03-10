@@ -13,6 +13,43 @@ description: "A permissionless token factory on Ethereum with diamond-hand vesti
 
 ---
 
+## How it works
+
+Every token launched through Ponzu follows the same lifecycle:
+
+<Steps>
+  <Step title="Presale">
+    Linear pricing. Price starts at a tenth of your target market cap and rises with each buy. The market validates your pricing through participation, not arbitrage. Each position is a transferable Ponzu Bottle NFT. 690,000 tokens available. 90% ETH refund before launch.
+  </Step>
+  <Step title="Launch">
+    Presale fills, anyone triggers launch. 310,000 tokens + raised ETH become permanent liquidity on PonzuSwap. LP tokens sit in a contract with no withdrawal function. The dev is dead the moment that button is pressed.
+  </Step>
+  <Step title="Diamond-Hand Vesting">
+    One claim. That's it. Claim early, leave the rest for the patient. Wait the full vest, get your allocation plus a pro-rata bonus from everyone who left early. No one is locked in. Everyone makes their choice.
+  </Step>
+  <Step title="Farming">
+    Stake LP, earn trading fees and redistributed tokens. Fixed 1,000,000 supply. No mint function. Every reward came from real economic activity. Impatient capital subsidizes the patient. Same principle, extended.
+  </Step>
+</Steps>
+
+---
+
+## The numbers
+
+| Parameter | Value |
+|-----------|-------|
+| Token supply | 1,000,000 fixed. No mint function. |
+| Presale allocation | 690,000 tokens (69%) |
+| Locked liquidity | 310,000 tokens (31%), permanent |
+| Team / VC / Treasury allocation | 0% |
+| Presale fee | 4% (1% creator, 1% protocol, 1% Kioke, 1% referrer) |
+| Swap fee | 1% (20% at launch, decays to 1% over first hour) |
+| Vesting | 10 days linear (10 weeks optional) |
+| Refund | 90% ETH back before launch |
+| Deploy cost | 0.005 ETH |
+
+---
+
 ## The System
 
 One transaction deploys eight contracts that wire together into a complete token ecosystem:

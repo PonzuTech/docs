@@ -43,6 +43,7 @@
           {
             "group": "Protocol",
             "pages": [
+              "protocol/articles",
               "protocol/recipe",
               "protocol/abi-reference",
               "protocol/contract-addresses"

@@ -1,19 +1,19 @@
 ---
 title: "The Launch"
-description: "Presale fills, liquidity is created, anti-sniper fees protect the first hour. Automatic. Irreversible."
+description: "Presale sold out, liquidity is created, anti-sniper fees protect the first hour. Automatic. Permissionless."
 ---
 
 ## Launch Trigger
 
 When all presale tokens are sold, the token launches.
 
-The presale splits:
+The launcher allocates:
 - **91%** ETH to the DEX as liquidity
 - **9%** ETH to the project vault
 
 The Launcher pairs 310,000 tokens (31% of total supply) with the ETH and creates a trading pair on PonzuSwap.
 
-The remaining tokens are vest. There is no tokens that are not paid for. Zero overhang, no circulating supply at launch. 
+The remaining tokens are vested. Every token was paid for. Zero overhang, zero circulating supply at launch. 
 
 ---
 
@@ -21,7 +21,7 @@ The remaining tokens are vest. There is no tokens that are not paid for. Zero ov
 
 PonzuSwap is a Uniswap V2 fork with three modifications: dynamic launch fees, fees on output tokens and Distributor routing. 
 
-### Launch Window (First Hour)
+### Launch (First Hour)
 
 **20% fee** decaying linearly to **1%** over 60 minutes.
 
@@ -36,12 +36,12 @@ PonzuSwap is a Uniswap V2 fork with three modifications: dynamic launch fees, fe
 | 60 min | 1.0% |
 
 
-Launch fees go to the same Distributor as normal swap fees. The first hour of trading, when fees are highest, generates the largest single batch of rewards for presale holders and farm stakers.
+Launch fees go to the Distributor as swap fees. The first hour of trading, when fees are highest, generates rewards for presale holders and farm stakers.
 
 ### Anti-Sniper Protection
 
 
-The design doesn't promise zero sniping. It makes the first-hour window expensive enough that casual bots can't profit from small price movements.
+The design doesn't promise zero sniping. It makes the first-hour window expensive enough that sniper bots are unlikely to round trip small price movements. 
 
 ---
 
@@ -55,4 +55,4 @@ All fees route to the Distributor, which splits them dynamically based on convic
 
 **Why do this?:** Everything about Ponzu is to align holders over time. By splitting fees into tokens and ETH, we let both the presale and farmers to claim ETH any time, but tokens, they can only claim once. 
 
-This way they can collect yield without needing to constantly sell.
+This is how they can collect yield without needing to constantly sell tokens.

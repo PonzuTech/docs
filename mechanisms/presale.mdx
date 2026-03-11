@@ -25,10 +25,7 @@ description: "Linear price presale. 90% Refundable. NFT-based allocations."
 
 The founder sets a target raise. Price starts at one-tenth of the final price and increases at a constant rate as tokens sell.
 
-```
-startPrice = endPrice / 10
-currentPrice = startPrice + (endPrice - startPrice) * (tokensSold / 690,000)
-```
+
 
 **Worked example:** 10 ETH target raise.
 
@@ -40,23 +37,23 @@ currentPrice = startPrice + (endPrice - startPrice) * (tokensSold / 690,000)
 | 517,500 (75%) | ~0.0000122 ETH | ~4.95 ETH |
 | 690,000 (100%) | ~0.0000158 ETH | ~10 ETH |
 
-First buyer pays 10x less than the last buyer. Early conviction gets a better price.
+Early conviction gets a better price.
 
 
 ---
 
-## Presale Purchase Fee (4%)
+## Presale Fees (4%)
 
 Every presale purchase has a 4% fee on ETH input, distributed immediately:
 
 | Recipient | Share |
 |-----------|-------|
-| Creator (project deployer) | 1% |
-| Ponzu protocol | 1% |
-| Kioke holders | 1% |
+| Project Vault | 1% |
 | Order referrer | 1% |
+| Kioke holders | 1% |
+| Ponzu protocol | 1% |
 
-This fee is deducted from your ETH before it enters the presale pool. On a 1 ETH purchase, 0.04 ETH goes to fees and 0.96 ETH goes toward your token allocation.
+This fee is deducted from the pool, not your allocation. You still get a 90% refund. 
 
 ---
 

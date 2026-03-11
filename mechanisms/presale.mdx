@@ -10,7 +10,7 @@ description: "Linear price presale. 90% Refundable. NFT-based allocations."
     Linear pricing. Price starts at a tenth of your target and rises with each buy. Each position is a transferable Ponzu Bottle NFT. 690,000 tokens available (69% of supply). 90% ETH refund before launch.
   </Step>
   <Step title="Launch">
-    Presale fills, anyone triggers launch. 310,000 tokens + raised ETH become permanent liquidity on PonzuSwap. LP tokens sit in a contract with no withdrawal function. The dev is dead the moment that button is pressed.
+    Presale fills, token launches. 310,000 tokens + raised ETH become liquidity on PonzuSwap. LP tokens sit in a contract with no withdrawal function. The dev is dead the moment that button is pressed.
   </Step>
   <Step title="Diamond-Hand Vesting">
     One claim. That's it. Claim early, leave the rest for the patient. Wait the full vest, get your allocation plus a pro-rata bonus from everyone who left early. No one is locked in. Everyone makes their choice.
@@ -45,23 +45,26 @@ First buyer pays 10x less than the last buyer. Early conviction gets a better pr
 
 ---
 
+## Presale Purchase Fee (4%)
+
+Every presale purchase has a 4% fee on ETH input, distributed immediately:
+
+| Recipient | Share |
+|-----------|-------|
+| Creator (project deployer) | 1% |
+| Ponzu protocol | 1% |
+| Kioke holders | 1% |
+| Order referrer | 1% |
+
+This fee is deducted from your ETH before it enters the presale pool. On a 1 ETH purchase, 0.04 ETH goes to fees and 0.96 ETH goes toward your token allocation.
+
+---
+
 ## Refunds
 
-Before launch, any buyer can call `refund()` to exit.
+Before launch, any buyer can refund to exit. You get 90% of your ETH back, no questions.
 
-| Component | What Happens |
-|-----------|-------------|
-| ETH returned | 90% of your proportional share of the presale pool |
-| Token penalty | 10% of your token allocation stays in the pool |
-| Purchase fee | The 4% from your original buy was already distributed. Gone. |
-
-**Round-trip math:** Send 1 ETH. 0.04 ETH (4%) distributed as fees. 0.96 ETH enters the pool. You refund. You get 90% of 0.96 = 0.864 ETH back. Total cost: 0.136 ETH (13.6%).
-
-The 10% token penalty redistributes pro-rata to remaining holders. Bob refunds his 10,000 tokens, 1,000 stay in the pool. Alice's allocation grows from 10,000 to 11,000. The weak hands subsidize the diamond hands.
-
-**Partial refunds** supported. Refund some tokens, keep the rest. Full refund burns the Ponzu Bottle NFT.
-
-**On-chain:** `getPosition(tokenId)` on the Ponzu Bottle contract shows any position's current allocation and ETH contributed.
+The remaining 10% is effectively sold. Tokens get redistributed and the ETH remains, giving everyone a boost in presale allocation. The weak hands subsidize the diamond hands.
 
 
 ---
@@ -70,10 +73,8 @@ The 10% token penalty redistributes pro-rata to remaining holders. Bob refunds h
 
 The presale completes when all 690,000 tokens are sold. No time limit. Projects can sell out in hours or months. Ship features while the presale fills.
 
-Once sold out, anyone calls `triggerLaunch()`. No admin action required. Permissionless from this point forward.
 
-**On-chain:** `tokensSold()` and `currentPrice()` are public view functions anyone can read.
 
 <Card title="What happens at launch" icon="rocket" href="/mechanisms/launch">
-  When the presale sells out, the Launcher creates permanent DEX liquidity and vesting begins.
+  Once sold out, Launcher deploys liquidity and vesting begins.
 </Card>

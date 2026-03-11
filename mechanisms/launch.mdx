@@ -1,82 +1,58 @@
 ---
 title: "The Launch"
-description: "Presale fills, anyone calls triggerLaunch(), permanent DEX liquidity is created. Automatic. Irreversible."
+description: "Presale fills, liquidity is created, anti-sniper fees protect the first hour. Automatic. Irreversible."
 ---
 
 ## Launch Trigger
 
-When all 690,000 presale tokens are sold, `triggerLaunch()` becomes callable. Anyone can call it. No admin action required.
+When all presale tokens are sold, the token launches.
 
-```
-require(tokensSold == 690000 && launched == false)
-```
+The presale splits:
+- **91%** ETH to the DEX as liquidity
+- **9%** ETH to the project vault
 
-You don't need to be online. Any wallet can trigger the launch once the presale fills.
+The Launcher pairs 310,000 tokens (31% of total supply) with the ETH and creates a trading pair on PonzuSwap.
 
----
-
-## What Happens
-
-The launch sequence executes atomically in a single transaction:
-
-<Steps>
-  <Step title="ETH Split">
-    The presale pool (96% of all ETH contributed, after the 4% fee was already distributed during purchases) splits:
-    - **91%** to the Launcher contract for liquidity creation
-    - **9%** directly to the project creator's wallet
-
-    **Example:** Presale pool holds 100 ETH. 91 ETH goes to liquidity. 9 ETH goes to the founder. The founder also already received ~1.04 ETH in creator fees during the presale (1% of ~104 ETH gross).
-  </Step>
-  <Step title="Liquidity Creation">
-    The Launcher pairs 310,000 tokens (31% of total supply, reserved at deployment) with the 91% ETH and creates a TKN/WETH trading pair on PonzuSwap.
-  </Step>
-  <Step title="Permanent LP Lock">
-    LP tokens are sent to the Presale contract. There is **no `withdrawLP()` function**. No admin function. No timelock. No multisig override. The LP tokens sit in a contract with no code path to remove them.
-
-    Read the Presale contract source on Etherscan. Search for any function that transfers LP tokens out. There isn't one. The dev is dead the moment that button is pressed.
-  </Step>
-  <Step title="Vesting Begins">
-    `launchTime` is set on-chain. Diamond-hand vesting starts from this block. Presale holders now have 10 days (Yellow Bottle) or 10 weeks (Green Bottle) to claim their tokens.
-  </Step>
-  <Step title="Trading Opens">
-    The token is immediately tradeable on PonzuSwap. Anti-sniper fee protection is active for the first hour.
-  </Step>
-</Steps>
+The remaining tokens are vest. There is no tokens that are not paid for. Zero overhang, no circulating supply at launch. 
 
 ---
 
-## Anti-Sniper Fee Decay
+## Swap Fee Structure
 
-Swap fees start at 20% and decay linearly to 1% over the first 60 minutes:
+PonzuSwap is a Uniswap V2 fork with three modifications: dynamic launch fees, fees on output tokens and Distributor routing. 
 
-| Time After Launch | Swap Fee | Round-Trip Cost (buy + sell) |
-|-------------------|----------|------------------------------|
-| 0 minutes | 20% | ~36% loss |
-| 15 minutes | 15.25% | ~28% loss |
-| 30 minutes | 10.5% | ~20% loss |
-| 45 minutes | 5.75% | ~11% loss |
-| 60 minutes | 1% (permanent) | ~2% loss |
+### Launch Window (First Hour)
 
-A sniper buying at launch pays 20% on the buy (gets 80% of expected tokens). Selling immediately costs another 20%. Net result: they keep ~64% of their original ETH. A token would need to pump 56% in the same block just to break even.
+**20% fee** decaying linearly to **1%** over 60 minutes.
 
-The fees don't disappear. They flow to the Distributor, which routes them to presale holders, farm stakers, and the project treasury. Snipers who try anyway end up subsidizing patient holders. Impatient capital exits, leaving behind tokens for the patient.
+| Time After Launch | Fee Rate |
+|-------------------|----------|
+| 0 min | 20.0% |
+| 10 min | 16.8% |
+| 20 min | 13.7% |
+| 30 min | 10.5% |
+| 40 min | 7.3% |
+| 50 min | 4.2% |
+| 60 min | 1.0% |
 
-**On-chain:** Fee decay is calculated from `launchTime` using `getCurrentFee()`. After 60 minutes, the fee is permanently 1%.
+
+Launch fees go to the same Distributor as normal swap fees. The first hour of trading, when fees are highest, generates the largest single batch of rewards for presale holders and farm stakers.
+
+### Anti-Sniper Protection
+
+
+The design doesn't promise zero sniping. It makes the first-hour window expensive enough that casual bots can't profit from small price movements.
 
 ---
 
-## Price Discovery
+### Normal Trading (After First Hour)
 
-Initial DEX price is the ratio of assets deposited into the PonzuSwap pool:
+**1% fee on token swaps.** Charged on the output token:
+- Buying (ETH -> TKN): 1% fee deducted in TKN
+- Selling (TKN -> ETH): 1% fee deducted in ETH
 
-```
-initialPrice = (91% of presale pool ETH) / 310,000 tokens
-```
+All fees route to the Distributor, which splits them dynamically based on conviction.
 
-**Example:** Presale pool holds 100 ETH at launch. 91 ETH + 310,000 tokens go to the pool. Initial price = 91 / 310,000 = 0.000294 ETH per token.
+**Why do this?:** Everything about Ponzu is to align holders over time. By splitting fees into tokens and ETH, we let both the presale and farmers to claim ETH any time, but tokens, they can only claim once. 
 
-The last presale buyer paid roughly `endPrice` per token. The initial DEX price will be close but not identical, because 31% of supply (the liquidity tokens) were never sold in the presale. From here, the market determines price. The pool has permanent liquidity.
-
-<Card title="What you deploy" icon="code" href="/founders/founder-details">
-  See the full deployment guide, revenue breakdown, and SDK reference.
-</Card>
+This way they can collect yield without needing to constantly sell.

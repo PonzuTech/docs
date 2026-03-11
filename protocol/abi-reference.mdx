@@ -10,7 +10,19 @@ description: "Contract ABIs for presale, swap, farming, and factory deployment."
 const PONZU_RECIPE = '0x1155484c5fE614538d83c444f9a6dB662E6a7153'
 
 const RECIPE_ABI = parseAbi([
-  'function craftPonzu((address owner, address keyContract, uint256 initialBuyAmount, uint256 vestingDuration, bytes32 pricingStrategyTemplate, bytes pricingStrategyData, bytes feeStrategyData, string tokenName, string tokenSymbol, string metadata, string imageURI) params) payable',
+  'function craftPonzu((' +
+    'address owner, ' +
+    'address keyContract, ' +
+    'uint256 initialBuyAmount, ' +
+    'uint256 vestingDuration, ' +
+    'bytes32 pricingStrategyTemplate, ' +
+    'bytes pricingStrategyData, ' +
+    'bytes feeStrategyData, ' +
+    'string tokenName, ' +
+    'string tokenSymbol, ' +
+    'string metadata, ' +
+    'string imageURI' +
+  ') params) payable',
 ])
 ```
 

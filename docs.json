@@ -7,7 +7,7 @@
     "light": "#FFE000",
     "dark": "#E6C200"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.ico",
   "navigation": {
     "tabs": [
       {
@@ -17,27 +17,27 @@
             "group": "Getting Started",
             "pages": [
               "index",
-              "basics/what-is-ponzu",
-              "benefits/entrepreneurs",
-              "benefits/investors"
+              "getting-started/what-is-ponzu",
+              "getting-started/entrepreneurs",
+              "getting-started/investors"
             ]
           },
           {
-            "group": "How Projects Raise",
+            "group": "Mechanisms",
             "pages": [
-              "basics/how-it-works",
-              "raise/presale",
-              "raise/launch",
-              "raise/diamond-hand-vesting",
-              "raise/founder-details"
+              "mechanisms/presale",
+              "mechanisms/anti-sniper",
+              "mechanisms/launch",
+              "mechanisms/diamond-hand-vesting",
+              "mechanisms/distributor",
+              "mechanisms/non-inflationary-farming"
             ]
           },
           {
-            "group": "Token Distribution",
+            "group": "For Founders",
             "pages": [
-              "rewards/distributor",
-              "rewards/non-inflationary-farming",
-              "rewards/dynamic-fees"
+              "founders/how-it-works",
+              "founders/founder-details"
             ]
           },
           {

@@ -5,19 +5,17 @@ description: "Claim early and forfeit tokens to patient holders. One claim. The 
 
 ## How It Works
 
-Traditional vesting unlocks gradually — claim a little today, a little tomorrow, sell continuously. Predictable, constant sell pressure. Cliffs only delay the inevitable.
+Traditional vesting unlocks gradually, claim a little today, a little tomorrow, sell continuously. Predictable, constant sell pressure. Cliffs only delay the inevitable, or worse, create sell pressure from hedged shorting.
 
-Diamond-hand vesting flips this. Tokens vest linearly, but you get one claim. Pick your moment. You receive the vested portion. Everything unvested goes to the Distributor, which routes it to remaining presale holders, farm stakers, and the project treasury. Your Ponzu Bottle NFT is burned.
+Diamond-hand vesting flips this. Tokens vest linearly, but you get one claim. Pick your time. You receive the vested portion. Everything unvested goes to the Distributor, which routes it to remaining presale holders, farm stakers, and the project treasury. Your Ponzu Bottle NFT is burned.
 
-```
-vestedAmount = (totalAllocation * elapsedTime) / vestingDuration
-```
 
-One claim forces a decision. No drip-selling. No constant sell pressure trickling into the market.
+No constant sell pressure every day on the charts.
 
-| Claim Day (10-day vest) | You Receive | Forfeited to Community |
+| Claim Day (10-day vest) | You Receive | Forfeited to Distributor |
 |-------------------------|-------------|----------------------|
 | Day 0 | 0% | 100% |
+| Hour 1 | 0.4% | 99.6% |
 | Day 1 | 10% | 90% |
 | Day 3 | 30% | 70% |
 | Day 5 | 50% | 50% |
@@ -28,72 +26,51 @@ One claim forces a decision. No drip-selling. No constant sell pressure tricklin
 
 ---
 
-## The Forfeit Bonus
+## Vesting Duration 
 
-Holders who wait the full vesting period receive their original allocation plus a pro-rata share of everything forfeited by early claimers.
+Set at token deployment. Cannot be changed.
 
-**Worked example:**
-
-- Total presale: 690,000 tokens across 100 buyers
-- You bought 10,000 tokens
-- 60 buyers claim on Day 1, each receiving 10% and forfeiting 90%
-- Those 60 held ~414,000 tokens combined. They forfeited ~372,600 tokens
-- Forfeited tokens go to the Distributor:
-
-| Recipient | Share of Forfeitures |
-|-----------|---------------------|
-| Remaining presale holders | 40% (~149,040 tokens) |
-| Farm stakers | 40% (~149,040 tokens) |
-| Project treasury | 15% (~55,890 tokens) |
-| Kioke Card holders | 5% (~18,630 tokens) |
-
-Your share of the presale holder portion: 10,000 / ~276,000 remaining presale tokens = ~3.6%. You receive ~5,366 bonus tokens on top of your 10,000.
-
-**Note:** As more presale holders claim and exit, the presale holder share (40%) shifts toward 0% and the farm staker share (40%) shifts toward 80%. The Distributor rebalances dynamically. See the [Distributor page](/mechanisms/distributor) for the full allocation logic.
-
----
-
-## Exit Early, But Leave the Rest
-
-You can leave any time. The cost of leaving decreases with patience.
-
-If the token has pumped 20x since presale, claiming 10% on Day 1 is still a 2x return in a single day. Nobody is punished. Impatient capital exits, leaving behind tokens for the patient. By the end of the vesting period, the remaining holders are those who chose to stay. You can't rush fermentation.
-
----
-
-## ETH Rewards (Separate from Token Claim)
-
-While vesting, Ponzu Bottle holders accumulate ETH rewards from the Distributor. These come from the 1% swap fee on every PonzuSwap trade.
-
-Call `claimETH(tokenId)` whenever you want. This does not burn your Ponzu Bottle. This does not count as your one-time token claim.
-
-After vesting ends, if you haven't claimed tokens, your Ponzu Bottle stays active. You keep earning ETH from swap fees indefinitely. No deadline. The smart contracts handle the economics.
-
-**Distributor ETH split for presale holders:** 20% of all Distributor ETH goes to presale holders (shifting toward 0% as holders claim and exit). See the [Distributor page](/mechanisms/distributor) for exact allocation formulas.
-
----
-
-## Vesting Duration (Founder Choice)
-
-Set at deployment. Cannot be changed.
-
-| Option | Duration | Ponzu Bottle Color |
-|--------|----------|-------------------|
-| Yellow Bottle | 10 days | Yellow |
-| Green Bottle | 10 weeks | Green |
+|  Duration | Ponzu Bottle |
+|----------|-------------------|
+|  10 days | Yellow |
+| 10 weeks | Green |
+|  10 months | Orange |
 
 Both use the same linear vesting formula. Only the duration differs.
 
-If you used the dev buy option at deployment, your own Ponzu Bottle vests on the same schedule as everyone else. Your community can verify on-chain that you're subject to the same rules.
+If you used the dev buy option at deployment, your own Ponzu Bottle vests on the same schedule as everyone else. 
+
 
 ---
 
-## The Game Theory
+## The Forfeit Bonus
 
-Exit early, leave the rest.
+Holders who wait during the vesting period receive their original allocation plus a pro-rata share of everything forfeited by early claimers.
 
-Day 1: Keep 10%, forfeit 90%.
-Day 5: Keep 50%, forfeit 50%.
-Day 10: Keep 100% + your share of every forfeiture before you.
+**Worked example:**
 
-A trader who claims 20,000 tokens on Day 1 leaves 180,000 for the holders who stayed. The patient holder stays because waiting is the better move. People self-select into their natural position. Conviction over time.
+- You bought 10,000 tokens
+- 60% claim on Day 1, each receiving 10% and forfeiting 90%
+- They held ~414,000 tokens combined. They forfeited ~372,600 tokens
+- Forfeited tokens go to the Distributor:
+
+
+Your share of the presale holder portion: 10,000 / ~276,000 remaining presale tokens = ~3.6%. You receive ~5,366 bonus tokens on top of your 10,000.
+
+ The circulating supply increased 6%, while you got 53% more tokens. 
+ Assuming the token price appreciated to justify forfeit 90%. You'll start to see how it alignment over time begins to make sense. 
+
+
+**Note:** As more presale holders claim and exit, the presale holder share (40%) shifts toward 0% and the farm staker share (40%) shifts toward 80%. The Distributor rebalances dynamically. See the [Distributor page](/mechanisms/distributor)
+
+
+---
+
+## ETH Rewards 
+
+While vesting, Ponzu Bottle holders accumulate ETH rewards from the Distributor. These come from the 1% swap fee for token sales. Fee is on the output token, so when someone sells TKN->ETH, the fee is in ETH, which gets sent to the distributor, of which part get sent to the Presale claim.
+
+Claim ETH whenever you want. This does not burn your Ponzu Bottle. This does not count as your one-time token claim. You keep earning ETH from swap fees, even after vesting. No deadline.  
+
+**Distributor ETH split for presale holders:** 20% of all Distributor ETH goes to presale holders (shifting toward 0% as presale holders claim and exit). See the [Distributor page](/mechanisms/distributor) 
+

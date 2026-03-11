@@ -1,11 +1,11 @@
 ---
 title: "The Distributor"
-description: "Ponzu's fee-routing engine. Splits all protocol revenue between presale holders, farmers, the project, and Kioke holders based on claim progress."
+description: "Ponzu's fee-routing engine. Splits all protocol revenue between presale holders, farmers, the project, and Kioke holders based on conviction."
 ---
 
 ## Overview
 
-Every fee, every forfeited token, every penalty flows through one contract. The Distributor splits all protocol revenue dynamically based on claim progress — as presale participants claim and exit, their share decreases and the farm's share increases. No governance votes. No admin keys. No one can change the formula after deployment.
+Every fee, every forfeited token, every penalty flows through one contract. The Distributor splits all protocol revenue dynamically based on claims. as presale participants claim and exit, their share decreases and the farm's share increases. No governance votes. No admin keys. No changes after deployment.
 
 ---
 
@@ -13,11 +13,10 @@ Every fee, every forfeited token, every penalty flows through one contract. The 
 
 | Source | Type | When |
 |--------|------|------|
-| Unvested tokens from early claimers | Project tokens | During vesting period |
 | Refund penalties (10% of tokens) | Project tokens | Before launch |
-| PonzuSwap trading fees (1%) | WETH | Ongoing after launch |
+| Unvested tokens from early claimers | Project tokens | During vesting period |
+| PonzuSwap trading fees (1%) | WETH | After launch |
 
-LP tokens from initial liquidity are held by the Presale contract. No withdrawal function exists. That's what makes liquidity unruggable.
 
 ---
 
@@ -32,17 +31,11 @@ When the Distributor receives project tokens (from early claims and refund penal
 | Project treasury | 15% | 15% | 15% |
 | Kioke holders | 5% | 5% | 5% |
 
-**The shift formula:**
-```
-presaleShare = 40% x (1 - totalClaimed / totalClaimableAmount)
-farmShare    = 40% + (40% x totalClaimed / totalClaimableAmount)
-```
-
-`totalClaimableAmount` is the actual number of tokens sold during presale (accounting for refund adjustments). As presale participants claim, their allocation decreases and the farm's increases. When the last person claims, the presale share hits 0% and the farm receives 80%.
+**Presale shifts to farmers:**
+As presale participants claim, their allocation decreases and the farm's increases. When the last presale claims, the presale share hits 0% and the farm receives 80%. 
 
 **Project treasury** = the wallet of the project creator who deployed the token.
-
-**Kioke holders** = holders of Kioke Card NFTs who have endorsed this specific project with Koji credits.
+**Kioke holders** = holders of Kioke Card who have endorsed this project with Koji credits.
 
 ---
 
@@ -52,81 +45,19 @@ When the Distributor receives WETH from swap fees, a fifth recipient enters the 
 
 | Recipient | Initial (0% claimed) | Mid (50% claimed) | Final (100% claimed) |
 |-----------|---------------------|--------------------|---------------------|
-| Ponzu protocol | 40% | 40% | 40% |
 | Presale holders | 20% | 10% | 0% |
 | Farm stakers | 20% | 30% | 40% |
 | Project treasury | 15% | 15% | 15% |
 | Kioke holders | 5% | 5% | 5% |
+| Ponzu protocol | 40% | 40% | 40% |
 
-The dynamic presale-to-farm shift operates on a smaller range (20% instead of 40%) because the protocol takes its 40% first.
-
-**ETH shift formula:**
-```
-presaleShare = 20% x (1 - totalClaimed / totalClaimableAmount)
-farmShare    = 20% + (20% x totalClaimed / totalClaimableAmount)
-```
+The dynamic presale-to-farm shift operates on a smaller range (20% instead of 40%) 
 
 ---
 
-## Worked Example
+## Lifetime Rewards
 
-10 ETH in swap fees when 50% of presale tokens have been claimed:
+Even after vesting ends, you continue earning rewards for the life of the project. Claim ETH anytime. For tokens, you can only claim once. Because presale positions are NFTs, you can sell on secondary without dumping on the market, or hold and keep collecting. Every swap adds to the claim.
 
-| Recipient | Share | Amount |
-|-----------|-------|--------|
-| Ponzu protocol | 40% | 4.0 ETH |
-| Presale holders | 10% | 1.0 ETH |
-| Farm stakers | 30% | 3.0 ETH |
-| Project treasury | 15% | 1.5 ETH |
-| Kioke holders | 5% | 0.5 ETH |
+The loyal are rewarded, even after vesting.
 
-You held 5% of the presale and haven't claimed your tokens yet. Your ETH reward from this batch: 5% of 1.0 ETH = 0.05 ETH. Claimable immediately. Repeatable every time new fees accumulate.
-
-Now assume 5,000 tokens were forfeited by early claimers during that same period:
-
-| Recipient | Share | Amount |
-|-----------|-------|--------|
-| Presale holders | 20% | 1,000 tokens |
-| Farm stakers | 60% | 3,000 tokens |
-| Project treasury | 15% | 750 tokens |
-| Kioke holders | 5% | 250 tokens |
-
----
-
-## Lifetime ETH Rewards
-
-Even after vesting ends, Ponzu Bottle holders who haven't claimed their tokens keep earning ETH from the Distributor. Pro-rata based on your share of the presale:
-
-```
-yourETHReward = (yourPurchases / totalPurchases) x ethSentToPresale
-```
-
-Claim ETH anytime by calling `claimETH(tokenId)`. You receive all accumulated ETH since your last claim. No minimum threshold. Repeatable.
-
-Once you claim your tokens (burning your Ponzu Bottle), ETH rewards stop. The tradeoff: claim tokens early and lose future ETH income, or hold your Ponzu Bottle and keep collecting.
-
-Conviction, extended.
-
----
-
-## Permissionless Operation
-
-No admin functions. Split ratios are calculated algorithmically from on-chain state. Anyone can trigger distribution by calling `distribute(token)` or `distributeETH()`. No one can change the formula or redirect funds. No proxy pattern. No upgrade mechanism. The bytecode is final.
-
-**Griefing?** Calling `distribute()` with dust amounts costs the caller gas but doesn't affect other users. Your share doesn't change regardless of when distribution is called.
-
-**Random tokens?** Sending a random ERC20 and calling `distribute(randomToken)` splits that token by current ratios. No harm to core flows. WETH must go through `distributeETH()`.
-
----
-
-## On-Chain Verification
-
-| Function | Returns |
-|----------|---------|
-| `getCurrentAllocations()` | Current basis point split for all recipients |
-| `presaleAllocationBP()` | Current presale share in basis points |
-| `farmAllocationBP()` | Current farm share in basis points |
-| `getBalance(token)` | Undistributed token balance |
-| `getETHBalance()` | Undistributed ETH balance |
-
-No trust required. Read the contract state directly.

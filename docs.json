@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Ponzu Documentation",
   "colors": {
-    "primary": "#E85D04",
-    "light": "#F48C06",
-    "dark": "#DC2F02"
+    "primary": "#E6C200",
+    "light": "#FFE000",
+    "dark": "#E6C200"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -17,20 +17,15 @@
             "group": "Getting Started",
             "pages": [
               "index",
+              "basics/what-is-ponzu",
               "benefits/entrepreneurs",
               "benefits/investors"
             ]
           },
           {
-            "group": "The Basics",
-            "pages": [
-              "basics/what-is-ponzu",
-              "basics/core-principles"
-            ]
-          },
-          {
             "group": "How Projects Raise",
             "pages": [
+              "basics/how-it-works",
               "raise/presale",
               "raise/launch",
               "raise/diamond-hand-vesting",
@@ -80,7 +75,7 @@
         {
           "anchor": "Ponzu App",
           "href": "https://ponzu.app",
-          "icon": "flask-vial"
+          "icon": "arrow-up-right-from-square"
         },
         {
           "anchor": "SDK on NPM",
@@ -90,20 +85,20 @@
         {
           "anchor": "SKILL.md",
           "href": "https://ponzu.app/SKILL.md",
-          "icon": "shield-check"
+          "icon": "robot"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/ponzu-light.png",
+    "dark": "/logo/ponzu-dark.png"
   },
   "navbar": {
     "links": [
       {
         "label": "Contact",
-        "href": "mailto:yuzu@ponzu.app"
+        "href": "mailto:gm@ponzu.app"
       }
     ],
     "primary": {
@@ -114,7 +109,7 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/0xYuzu",
+      "x": "https://x.com/ponzu_app",
       "github": "https://github.com/nicola-ponzu"
     }
   }

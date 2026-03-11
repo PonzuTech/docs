@@ -1,13 +1,13 @@
 ---
 title: "What is Ponzu?"
-description: "A token factory on Ethereum. One transaction deploys eight immutable contracts. Diamond-hand vesting, non-inflationary farming, permanent liquidity."
+description: "A token factory on Ethereum. Presales with linear pricing, Refunds, Diamond-hand vesting and non-inflationary rewards."
 ---
 
 ## A token factory that adds time.
 
-We launch roughly a million tokens per month. Serial deployers drain 80% of all liquidity within 24 hours. A small cartel of 12 wallet clusters engineers nearly 20% of token creations while extracting millions. The business model is velocity: deploy, pump, drain, repeat.
+Tokens need time. Time for communities to form. Time for founders to ship. Time for price discovery to mean something beyond who had the fastest bot. The best projects are the ones where holders and founders are aligned around the same timeline.
 
-Ponzu deploys eight contracts in a single transaction. Presale, DEX pool, vesting, farming, distributor, NFT positions. All immutable. No admin keys. No upgrade proxies.
+Ponzu is a launchpad that builds time into every phase of a token's lifecycle. Presale pricing rewards early believers. Refunds let people leave without killing the project. Diamond-hand vesting makes patience the most profitable strategy. And every reward comes from real activity, not inflation.
 
 Every mechanism follows one principle: **exit early, but leave the rest.**
 
@@ -32,53 +32,94 @@ Every mechanism follows one principle: **exit early, but leave the rest.**
 
 ---
 
-## The numbers
+## Presale Refunds
 
-| Parameter | Value |
-|-----------|-------|
-| Token supply | 1,000,000 fixed. No mint function. |
-| Presale allocation | 690,000 tokens (69%) |
-| Locked liquidity | 310,000 tokens (31%), permanent |
-| Team / VC / Treasury allocation | 0% |
-| Presale fee | 4% (1% creator, 1% protocol, 1% Kioke, 1% referrer) |
-| Swap fee | 1% (20% at launch, decays to 1% over first hour) |
-| Vesting | 10 days linear (10 weeks optional) |
-| Refund | 90% ETH back before launch |
-| Deploy cost | 0.005 ETH |
+Most presales force a choice: commit capital with no exit, or a bonding curve with bots fighting for quick flips. 
+
+Ponzu is a new way to launch.
+
+Before launch, any participant can claim a refund: 90% of their ETH back. The 10% token penalty stays in the pool, redistributed pro-rata to everyone who remained. Alice and Bob each buy 10,000 tokens. Bob refunds. His penalty stays in the pool. Alice's allocation grows to 11,000.
+
+The question shifts from "is this a rug?" to "is this team worth backing?" And if you don't want the penalty, your presale position is a Ponzu Bottle NFT. Sell it on secondary. There is liquidity, but no dumping. Only refunds. Rest until launch.
+
 
 ---
 
-## Eight contracts, one transaction
+## Linear pricing
 
-| Contract | What it does |
-|----------|-------------|
-| **Token** | ERC-20 with 1,000,000 fixed supply. No mint function. |
-| **Presale** | Purchases, refunds, vesting, claims. 690,000 tokens. |
-| **Launcher** | Creates DEX liquidity at graduation. 310,000 tokens. |
-| **Distributor** | Routes all fees dynamically between presale holders, farmers, project, and Kioke. |
-| **Farm** | LP staking for non-inflationary rewards. |
-| **Ponzu Bottle** | ERC-721 NFT representing a presale position. Transferable. |
-| **Liquidity Card** | ERC-721 NFT representing a farm staking position. Transferable. |
-| **Project** | Registry and access control coordinator. |
 
-After deployment, all parameters are fixed. No upgrade proxies. No admin keys. No migration steps.
+Ponzu uses linear pricing. You set a target market cap. Price starts at a tenth of that target and increases linearly as tokens sell out. Early believers get better prices. Not exponential, not over subscribed, linear. A middle ground for price discovery.
+
+A project that starts at \$100K and slowly sells out at \$1M as it finds product-market fit is healthier than one that starts at \$4K, sells out instantly, and launches into speculation. The presale runs in the background. Ship features. Share an update. Watch the presale fill. 
+
+Combined with presale refunds, linear pricing unlocks price discovery over time. No deadlines, less existential risk.
 
 ---
 
-## Verify it yourself
+## Anti-sniper protection
 
-Every claim above is on-chain.
+When liquidity goes live, bots buy tokens the moment they are tradeable, expecting to dump on retail shortly after.
 
-| Claim | How to verify |
-|-------|---------------|
-| Fixed 1M supply | Call `totalSupply()` on the Token contract |
-| No mint function | Read the Token contract source on Etherscan. No `mint()` exists. |
-| 69/31 split | Check `balanceOf(presaleAddress)` and `balanceOf(launcherAddress)` at deployment |
-| No admin keys | No `owner`, `admin`, or `onlyOwner` modifiers in any contract after init |
-| LP permanently locked | The Presale contract holds LP tokens. No `withdraw` or `transfer` function exists for them. |
-| Fee splits | Read the Distributor. Hardcoded percentages, no setter functions. |
+PonzuSwap launches with a 20% swap fee that decays linearly to 1% over the first hour. Sniping becomes less attractive. Those elevated fees flow to the Distributor. Early speculation subsidizes long-term holders.
 
-Factory contract: [`0x1155484c5fE614538d83c444f9a6dB662E6a7153`](https://etherscan.io/address/0x1155484c5fE614538d83c444f9a6dB662E6a7153)
+
+---
+
+## Diamond-hand vesting
+
+You can claim only once. Exit early, leave the rest.
+
+A 10-day vest: claim on day one and you get 10% but forfeit the rest. Wait until day ten, you get 100% plus a share of what the impatient left behind. The weak hands subsidize the diamond hands.
+
+| Claim Day | You Receive | Community Receives |
+|-----------|------------|-------------------|
+| Day 1     | 10%        | 90%               |
+| Day 3     | 30%        | 70%               |
+| Day 5     | 50%        | 50%               |
+| Day 10    | 100% + bonus from early claimers | 0% |
+
+Nobody is trapped. If the token pumps 20x on day one, claiming 10% of a 20x is still a 2x. The cost of leaving decreases with patience. By day ten, the remaining holders are, by definition, those who chose to stay. 
+
+We'll be adding 10 week and 10 month vesting in season 2. 
+
+---
+
+## The Distributor
+
+Every early exit rewards the loyal.
+
+All tokens from trading fees, unvested claims, and penalties flow through the Distributor and route dynamically: 40% to presale holders, 40% to the farm, 15% to the project, 5% to Kioke holders. As presale participants claim their tokens, their share decreases and the farm's share increases. No governance votes. No admin intervention. The system reads the state and adjusts.
+
+When the last presale claims, the farm will receive 80% of tokens redistributed. 
+
+
+---
+
+## Non-inflationary farming
+
+Ponzu's farm distributes rewards from actual economic activity. Swap fees. Diamond-hand early claims. Penalties from early farm exits. Real revenue, not printed tokens. Every reward token was earned by fees or impatience.
+
+The farm has its own conviction mechanism: claim ETH anytime, but claim project tokens only once. Unstake your LP before 7 days, leave a portion behind. Half goes to remaining stakers. The other half becomes protocol-owned liquidity. Impatient capital subsidizes the loyal.
+
+
+---
+
+## The complete picture
+
+Each mechanism reinforces the others. Refunds allow ambitious presale valuations because buyers aren't taking existential risk. The factory makes launches trustless because the contracts are immutable from the moment of deployment. Diamond-hand vesting tests patience. Swap fees protect from snipers. The Distributor routes tokens to those with conviction. The farm extends conviction beyond vesting. 
+
+Token launches do not have to be casinos. They do not have to be zero-sum games between insiders and retail. With the right mechanism design, they become coordination tools that tokenise ideas and reward believers.
+
+Everything Ponzu builds is working toward one thing: aligning founders and holders throughout a tokens lifecycle.
+
+<CardGroup cols={2}>
+  <Card title="For Founders" icon="rocket" href="/benefits/entrepreneurs">
+    How launching a token early can bootstrap and accelerate your growth.
+  </Card>
+  <Card title="For Investors" icon="chart-line" href="/benefits/investors">
+    What changes when you can only claim once, and why patience pays.
+  </Card>
+</CardGroup>
 
 ---
 
